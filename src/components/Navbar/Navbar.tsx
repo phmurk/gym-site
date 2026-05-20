@@ -87,14 +87,14 @@ function Navbar() {
             </li>
 
             <li className="nav-item">
-              <NavLink className="nav-link" to="/prices">
-                Цены
+              <NavLink className="nav-link" to="/trainers">
+                Тренеры
               </NavLink>
             </li>
 
             <li className="nav-item">
-              <NavLink className="nav-link" to="/trainers">
-                Тренеры
+              <NavLink className="nav-link" to="/prices">
+                Цены
               </NavLink>
             </li>
           </ul>
@@ -154,19 +154,19 @@ function Navbar() {
             <li className="nav-item">
               <NavLink
                 className="nav-link"
-                to="/prices"
+                to="/trainers"
                 onClick={closeOffcanvas}
               >
-                Цены
+                Тренеры
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink
                 className="nav-link"
-                to="/trainers"
+                to="/prices"
                 onClick={closeOffcanvas}
               >
-                Тренеры
+                Цены
               </NavLink>
             </li>
             <li className="nav-item">

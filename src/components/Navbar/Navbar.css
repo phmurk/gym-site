@@ -63,14 +63,14 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 20px; /* или любое другое расстояние */
+  gap: 40px; /* или любое другое расстояние */
 }
 
 .nav-links .nav-link {
   position: relative;
   color: #ffffff !important;
   font-weight: 500;
-  font-size: 17px;
+  font-size: 20px;
   transition: 0.3s ease;
 }
 
@@ -89,7 +89,7 @@ body {
 .profile-link {
   text-decoration: none;
   color: white;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 500;
   transition: 0.3s ease;
   display: flex;

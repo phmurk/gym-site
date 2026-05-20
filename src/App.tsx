@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import "./App.css";
+
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 
@@ -11,21 +13,20 @@ import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Navbar />
+    <BrowserRouter>
+      <Navbar />
+      {/* <div className="container"> */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/trainers" element={<Trainers />} />
+        <Route path="/prices" element={<Prices />} />
+        <Route path="/schedule" element={<Schedule />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+      {/* </div> */}
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/trainers" element={<Trainers />} />
-          <Route path="/prices" element={<Prices />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-
-        <Footer />
-      </BrowserRouter>
-    </div>
+      <Footer />
+    </BrowserRouter>
   );
 }
 
