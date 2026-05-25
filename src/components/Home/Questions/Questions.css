@@ -1,7 +1,7 @@
 .questions {
   background-color: #111111;
   color: #ffffff;
-  padding: 80px 0;
+  padding: 30px 0;
 }
 
 .questions .container {
@@ -101,6 +101,8 @@
   .questions-title {
     font-size: 30px;
     margin-bottom: 22px;
+    display: flex;
+    justify-content: center;
   }
 
   .questions-accordion .accordion-button {

@@ -1,0 +1,126 @@
+.mission {
+  /* или #111111 */
+  background-color: #000000;
+  /* background-color: #111111; */
+  padding: 70px 0;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.mission-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
+}
+
+.mission-description {
+  flex: 1;
+  max-width: 550px;
+}
+
+.mission-title {
+  display: flex;
+  font-weight: 700;
+  font-size: 40px;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+}
+
+.mission-text {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #d1d1d1;
+  margin: 0;
+}
+
+.mission-stats {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 550px;
+}
+
+.mission-stat {
+  background: rgba(255, 59, 59, 0.08);
+  border: 1px solid rgba(255, 59, 59, 0.2);
+  border-radius: 10px;
+  padding: 35px 20px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.mission-stat:hover {
+  background: rgba(255, 59, 59, 0.1);
+  transform: translateY(-5px);
+  border-color: rgba(255, 59, 59, 0.5);
+}
+
+.mission-stat-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: #ff3b3b;
+  line-height: 1;
+  margin-bottom: 10px;
+  letter-spacing: 0px;
+}
+
+.mission-stat-label {
+  color: #d1d1d1;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+@media (max-width: 992px) {
+  .mission-container {
+    flex-direction: column;
+    gap: 50px;
+  }
+
+  .mission-description {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .mission-stats {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 576px) {
+  .mission {
+    padding: 60px 0;
+  }
+
+  .mission-title {
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .mission-stats {
+    grid-template-columns: 1fr; /* Одна колонка на мобильных */
+    gap: 15px;
+  }
+
+  .mission-stat {
+    padding: 25px 20px;
+    flex-direction: row; /* На мобильном можно сделать в строку: Цифра - Текст */
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .mission-stat-value {
+    margin-bottom: 0;
+    font-size: 36px;
+  }
+}
