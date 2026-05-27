@@ -16,14 +16,17 @@ const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 function ScrollGallery() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
+    if (!isPlaying) return;
+
     const interval = setInterval(() => {
       nextSlide();
-    }, 2500);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [current]);
+  }, [current, isPlaying]);
 
   const prevIndex = current === 0 ? images.length - 1 : current - 1;
 
@@ -39,19 +42,6 @@ function ScrollGallery() {
     setDirection(-1);
 
     setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const handleDragEnd = (
-    _: MouseEvent | TouchEvent | PointerEvent,
-    info: any,
-  ) => {
-    if (info.offset.x < -80) {
-      nextSlide();
-    }
-
-    if (info.offset.x > 80) {
-      prevSlide();
-    }
   };
 
   return (
@@ -83,12 +73,6 @@ function ScrollGallery() {
               style={{
                 backgroundImage: `url(${images[current]})`,
               }}
-              drag="x"
-              dragConstraints={{
-                left: 0,
-                right: 0,
-              }}
-              onDragEnd={handleDragEnd}
               initial={{
                 x: direction > 0 ? 220 : -220,
                 opacity: 0,
@@ -121,6 +105,42 @@ function ScrollGallery() {
               backgroundImage: `url(${images[nextIndex]})`,
             }}
           />
+          <button className="gallery-btn prev-btn" onClick={prevSlide}>
+            ←
+          </button>
+
+          <button className="gallery-btn next-btn" onClick={nextSlide}>
+            →
+          </button>
+
+          <button
+            className="gallery-play-btn"
+            onClick={() => setIsPlaying(!isPlaying)}
+          >
+            {isPlaying ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                fill="currentColor"
+                className="bi bi-pause"
+                viewBox="0 0 16 16"
+              >
+                <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                fill="currentColor"
+                className="bi bi-play"
+                viewBox="0 0 16 16"
+              >
+                <path d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
     </section>
