@@ -80,6 +80,14 @@
 }
 
 @media (max-width: 992px) {
+  .mission {
+    padding: 70px 0;
+  }
+  .mission-title {
+    display: flex;
+    justify-content: center;
+  }
+
   .mission-container {
     flex-direction: column;
     gap: 50px;

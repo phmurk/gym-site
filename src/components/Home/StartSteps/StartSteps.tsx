@@ -57,9 +57,10 @@ function StartSteps() {
           </svg>
           {steps.map((step, index) => (
             <div className={`step-card step-${index + 1}`} key={step.number}>
-              <div className="step-number">{step.number}</div>
-
-              <h3>{step.title}</h3>
+              <div className="step-card-head">
+                <div className="step-number">{step.number}</div>
+                <h3>{step.title}</h3>
+              </div>
 
               <p>{step.text}</p>
             </div>

@@ -64,6 +64,8 @@
 
 .questions-accordion .accordion-button:not(.collapsed) {
   box-shadow: none;
+  border-radius: #ff3b3b;
+  box-shadow: 0 0 30px rgba(255, 59, 59, 0.2);
 }
 
 /* .questions-accordion .accordion-button:focus {
@@ -92,10 +94,15 @@
 /* .questions-accordion .accordion-body li {
   margin: 6px 0;
 } */
+@media (max-width: 1200px) {
+  .questions {
+    padding: 50px 0;
+  }
+}
 
 @media (max-width: 768px) {
   .questions {
-    padding: 60px 0;
+    padding: 50px 0;
   }
 
   .questions-title {

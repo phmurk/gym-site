@@ -4,6 +4,7 @@ import OurValues from "../../components/Home/OurValues/OurValues";
 import Questions from "../../components/Home/Questions/Questions";
 import Gallery from "../../components/Home/Gallery/Gallery";
 import StartSteps from "../../components/Home/StartSteps/StartSteps";
+import Reviews from "../../components/Home/Reviews/Reviews";
 
 function Home() {
   return (
@@ -12,8 +13,9 @@ function Home() {
       <OurMission />
       <OurValues />
       <Gallery />
-      <Questions />
       <StartSteps />
+      <Questions />
+      <Reviews />
     </>
   );
 }

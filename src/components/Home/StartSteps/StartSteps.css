@@ -75,6 +75,10 @@
   box-shadow: 0 0 30px rgba(255, 59, 59, 0.2);
 }
 
+.step-card p {
+  margin: 0;
+}
+
 .step-1 {
   top: -40px;
   left: 5%;
@@ -119,6 +123,20 @@
   .pulse-line {
     display: none;
   }
+  .step-card-head h3 {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+  }
+
+  .step-card-head {
+    display: flex;
+    gap: 10px;
+  }
+
+  .start {
+    padding: 60px 0 60px;
+  }
 
   .pulse-wrapper {
     display: flex;
@@ -130,14 +148,22 @@
   .step-card {
     position: static;
     width: 100%;
+    padding: 20px;
+  }
+
+  .step-number {
+    width: 54px;
+    height: 54px;
+    font-size: 22px;
   }
 
   .start-title {
-    font-size: 42px;
+    font-size: 32px;
     /* margin-bottom: 60px; */
   }
 
   .start-subtitle {
-    margin-bottom: 60px;
+    font-size: 20px;
+    margin-bottom: 40px;
   }
 }

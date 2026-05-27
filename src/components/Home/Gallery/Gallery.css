@@ -1,5 +1,5 @@
 .scroll-gallery {
-  padding: 80px 0;
+  padding: 80px 0 130px;
   background-color: #000000;
   overflow: hidden;
 }
@@ -79,39 +79,26 @@
 
 .gallery-counter {
   position: absolute;
-
   left: 36px;
   bottom: 36px;
-
   color: #ff3b3b;
-
   font-size: 18px;
   font-weight: 700;
-
   letter-spacing: 4px;
-
   z-index: 2;
 }
 
 .side-image {
   position: absolute;
-
   width: 420px;
   height: 560px;
-
   border-radius: 24px;
-
   background-size: cover;
   background-position: center;
-
   filter: blur(3px) brightness(0.6);
-
   opacity: 0.75;
-
   transform: scale(0.88);
-
   transition: 0.5s ease;
-
   border: 1px solid #1f1f1f;
 }
 
@@ -124,6 +111,10 @@
 }
 
 @media (max-width: 1200px) {
+  .scroll-gallery {
+    padding: 60px 0 110px;
+  }
+
   .main-image {
     width: 620px;
     height: 560px;
@@ -182,31 +173,20 @@
 
 .gallery-play-btn {
   position: absolute;
-
   bottom: -70px;
   left: 50%;
-
   transform: translateX(-50%);
-
   width: 56px;
   height: 56px;
-
   border-radius: 50%;
-
   border: 1px solid #ff3b3b;
-
   background: rgba(0, 0, 0, 0.8);
-
   color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
   transition: 0.3s ease;
-
   z-index: 20;
 }
 
