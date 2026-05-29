@@ -1,6 +1,6 @@
 .prices-info {
   color: white;
-  background-color: #181818;
+  /* background-color: #131313; */
   padding: 60px 0;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .prices-info-card {
-  background: #0f0f0f;
+  background: #0c0c0c;
   border: 1px solid rgba(255, 59, 59, 0.15);
   border-radius: 24px;
   padding: 40px;

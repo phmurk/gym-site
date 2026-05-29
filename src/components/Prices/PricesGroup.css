@@ -1,0 +1,17 @@
+.pricing-group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .pricing-group-grid {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-group-grid {
+    grid-template-columns: 1fr;
+  }
+}
