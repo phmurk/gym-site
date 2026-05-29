@@ -1,5 +1,11 @@
+import PricesInfo from "../../components/Prices/PricesInfo";
+
 function Prices() {
-  return <h1>Prices Page</h1>;
+  return (
+    <>
+      <PricesInfo />
+    </>
+  );
 }
 
 export default Prices;

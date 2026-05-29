@@ -1,3 +1,5 @@
+import "./Schedule.css";
+
 function Schedule() {
   return <h1>Schedule Page</h1>;
 }
