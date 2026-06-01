@@ -5,6 +5,13 @@ import {
 } from "../../components/Schedule/ScheduleData";
 import "./Schedule.css";
 
+const uniqueClasses = Array.from(
+  new Set(scheduleData.flatMap((d) => d.lessons.map((l) => l.title))),
+).sort();
+const uniqueTrainers = Array.from(
+  new Set(scheduleData.flatMap((d) => d.lessons.map((l) => l.trainer))),
+).sort();
+
 const getLessonDescription = (title: string) => {
   const descMap: Record<string, string> = {
     "МИНИ-ГРУППА":
@@ -51,37 +58,39 @@ const checkIsBookingAvailable = (
 ) => {
   const [startStr] = lessonTime.split(" - ");
   const [hours, minutes] = startStr.split(":").map(Number);
-
   const classDateTime = new Date(lessonDate);
   classDateTime.setHours(hours, minutes, 0, 0);
-
   const diffMs = classDateTime.getTime() - now.getTime();
-
   const diffHours = diffMs / (1000 * 60 * 60);
-
   return diffHours >= 3;
 };
 
 export const Schedule: React.FC = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [orderedDays, setOrderedDays] = useState<any[]>([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const [classFilter, setClassFilter] = useState("");
+  const [trainerFilter, setTrainerFilter] = useState("");
+
   const [selectedLesson, setSelectedLesson] = useState<ScheduleItem | null>(
     null,
   );
+  const [selectedDay, setSelectedDay] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
-
+  const [name, setName] = useState("");
+  const [nameError, setNameError] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeRules, setAgreeRules] = useState(false);
   const [agreeOffer, setAgreeOffer] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
 
@@ -96,16 +105,13 @@ export const Schedule: React.FC = () => {
       "Суббота",
     ];
     const today = new Date();
-
     const weekData = [];
 
     for (let i = 0; i < 7; i++) {
       const nextDate = new Date(today);
       nextDate.setDate(today.getDate() + i);
-
       const dayName = dayNamesRu[nextDate.getDay()];
       const dateStr = `${String(nextDate.getDate()).padStart(2, "0")}.${String(nextDate.getMonth() + 1).padStart(2, "0")}`;
-
       const dayData = scheduleData.find((d) => d.day === dayName);
 
       weekData.push({
@@ -115,18 +121,35 @@ export const Schedule: React.FC = () => {
         lessons: dayData ? dayData.lessons : [],
       });
     }
-
     setOrderedDays(weekData);
   }, []);
 
-  const openModal = (lesson: ScheduleItem, isAvailable: boolean) => {
-    if (!isAvailable) return;
+  const filteredDays = orderedDays.map((day) => {
+    const filteredLessons = day.lessons.filter((lesson: ScheduleItem) => {
+      const matchClass = classFilter === "" || lesson.title === classFilter;
+      const matchTrainer =
+        trainerFilter === "" || lesson.trainer === trainerFilter;
+      return matchClass && matchTrainer;
+    });
+    return { ...day, lessons: filteredLessons };
+  });
 
+  const openModal = (
+    lesson: ScheduleItem,
+    isAvailable: boolean,
+    dayObj: any,
+  ) => {
+    if (!isAvailable) return;
     setSelectedLesson(lesson);
+    setSelectedDay(dayObj);
     setIsModalOpen(true);
     setIsSubmitted(false);
+    setName("");
+    setNameError("");
     setPhone("+375");
     setPhoneError("");
+    setEmail("");
+    setEmailError("");
     setAgreePersonal(false);
     setAgreeRules(false);
     setAgreeOffer(false);
@@ -134,25 +157,41 @@ export const Schedule: React.FC = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setTimeout(() => setSelectedLesson(null), 300);
+    setTimeout(() => {
+      setSelectedLesson(null);
+      setSelectedDay(null);
+    }, 300);
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    let isValid = true;
+
+    if (name.trim().length < 2) {
+      setNameError("Введите корректное имя");
+      isValid = false;
+    } else {
+      setNameError("");
+    }
+
     const cleanedPhone = phone.replace(/\D/g, "");
-    const isValidBelarusPhone = /^375(17|25|29|33|44)\d{7}$/.test(cleanedPhone);
-
-    if (!isValidBelarusPhone) {
-      setPhoneError(
-        "Введите корректный номер РБ (например: +375 29 123-45-67)",
-      );
-      return;
+    if (!/^375(17|25|29|33|44)\d{7}$/.test(cleanedPhone)) {
+      setPhoneError("Некорректный номер РБ");
+      isValid = false;
+    } else {
+      setPhoneError("");
     }
 
-    setPhoneError("");
-    if (agreePersonal && agreeRules && agreeOffer) {
-      setIsSubmitted(true);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setEmailError("Некорректный email");
+      isValid = false;
+    } else {
+      setEmailError("");
     }
+
+    if (!isValid) return;
+
+    if (agreePersonal && agreeRules && agreeOffer) setIsSubmitted(true);
   };
 
   return (
@@ -167,8 +206,42 @@ export const Schedule: React.FC = () => {
           </p>
         </div>
 
+        <div className="schedule-filters">
+          <div className="filter-group">
+            <label className="filter-label">Направление:</label>
+            <select
+              className="filter-select"
+              value={classFilter}
+              onChange={(e) => setClassFilter(e.target.value)}
+            >
+              <option value="">Все занятия</option>
+              {uniqueClasses.map((cls) => (
+                <option key={cls} value={cls}>
+                  {cls}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label">Тренер:</label>
+            <select
+              className="filter-select"
+              value={trainerFilter}
+              onChange={(e) => setTrainerFilter(e.target.value)}
+            >
+              <option value="">Все тренеры</option>
+              {uniqueTrainers.map((tr) => (
+                <option key={tr} value={tr}>
+                  {tr}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         <div className="schedule-tabs">
-          {orderedDays.map((day, index) => (
+          {filteredDays.map((day, index) => (
             <button
               key={index}
               className={`schedule-tab ${activeTabIndex === index ? "active" : ""}`}
@@ -180,38 +253,59 @@ export const Schedule: React.FC = () => {
           ))}
         </div>
 
-        <div className="schedule-grid">
-          {orderedDays[activeTabIndex]?.lessons.length > 0 ? (
-            orderedDays[activeTabIndex].lessons.map(
-              (lesson: ScheduleItem, idx: number) => {
-                const isAvailable = checkIsBookingAvailable(
-                  lesson.time,
-                  orderedDays[activeTabIndex].fullDate,
-                  currentTime,
-                );
+        <div className="schedule-table-wrapper">
+          <div className="schedule-week-grid">
+            {filteredDays.map((day, dayIndex) => (
+              <div
+                key={dayIndex}
+                className={`schedule-day-column ${activeTabIndex === dayIndex ? "active-mobile" : ""}`}
+              >
+                <div className="schedule-day-header">
+                  <span className="col-day">{day.dayName}</span>
+                  <span className="col-date">{day.dateStr}</span>
+                </div>
 
-                return (
-                  <div
-                    key={idx}
-                    className={`lesson-card ${!isAvailable ? "lesson-card-disabled" : ""}`}
-                    onClick={() => openModal(lesson, isAvailable)}
-                  >
-                    <div className="lesson-time">{lesson.time}</div>
-                    <h3 className="lesson-title">{lesson.title}</h3>
-                    <div className="lesson-trainer">
-                      <span className="trainer-icon">👤</span> {lesson.trainer}
+                <div className="schedule-day-lessons">
+                  {day.lessons.length > 0 ? (
+                    day.lessons.map(
+                      (lesson: ScheduleItem, lessonIdx: number) => {
+                        const isAvailable = checkIsBookingAvailable(
+                          lesson.time,
+                          day.fullDate,
+                          currentTime,
+                        );
+                        return (
+                          <div
+                            key={lessonIdx}
+                            className={`lesson-card ${!isAvailable ? "lesson-card-disabled" : ""}`}
+                            onClick={() => openModal(lesson, isAvailable, day)}
+                          >
+                            <div className="lesson-time">{lesson.time}</div>
+                            <h3 className="lesson-title">{lesson.title}</h3>
+                            <div className="lesson-trainer">
+                              <span className="trainer-icon">👤</span>{" "}
+                              {lesson.trainer}
+                            </div>
+                            {!isAvailable && (
+                              <div className="lesson-closed-badge">
+                                Запись закрыта
+                              </div>
+                            )}
+                          </div>
+                        );
+                      },
+                    )
+                  ) : (
+                    <div className="no-lessons">
+                      {classFilter || trainerFilter
+                        ? "Нет подходящих занятий"
+                        : "Занятий нет"}
                     </div>
-
-                    {!isAvailable && (
-                      <div className="lesson-closed-badge">Запись закрыта</div>
-                    )}
-                  </div>
-                );
-              },
-            )
-          ) : (
-            <div className="no-lessons">В этот день занятий нет.</div>
-          )}
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -230,7 +324,7 @@ export const Schedule: React.FC = () => {
                   <span>{selectedLesson?.title}</span>.
                 </p>
                 <p>
-                  Мы ждем вас {orderedDays[activeTabIndex]?.dateStr} в{" "}
+                  Мы ждем вас {selectedDay?.dateStr} в{" "}
                   {selectedLesson?.time.split(" - ")[0]}
                 </p>
                 <button className="modal-submit-btn" onClick={closeModal}>
@@ -242,6 +336,9 @@ export const Schedule: React.FC = () => {
                 <div className="modal-lesson-info">
                   <h2>{selectedLesson?.title}</h2>
                   <p className="modal-time-trainer">
+                    <span>
+                      📅 {selectedDay?.dayName}, {selectedDay?.dateStr}
+                    </span>
                     <span>🕒 {selectedLesson?.time}</span>
                     <span>👤 {selectedLesson?.trainer}</span>
                   </p>
@@ -252,6 +349,23 @@ export const Schedule: React.FC = () => {
 
                 <form className="booking-form" onSubmit={handleSubmit}>
                   <h4 className="form-title">Запись на тренировку</h4>
+
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      placeholder="Ваше имя"
+                      required
+                      value={name}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        setNameError("");
+                      }}
+                      className={nameError ? "error-input" : ""}
+                    />
+                    {nameError && (
+                      <span className="error-text">{nameError}</span>
+                    )}
+                  </div>
 
                   <div className="input-group">
                     <input
@@ -270,6 +384,23 @@ export const Schedule: React.FC = () => {
                     )}
                   </div>
 
+                  <div className="input-group">
+                    <input
+                      type="email"
+                      placeholder="Ваш Email"
+                      required
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setEmailError("");
+                      }}
+                      className={emailError ? "error-input" : ""}
+                    />
+                    {emailError && (
+                      <span className="error-text">{emailError}</span>
+                    )}
+                  </div>
+
                   <div className="checkbox-group">
                     <label>
                       <input
@@ -278,8 +409,8 @@ export const Schedule: React.FC = () => {
                         checked={agreePersonal}
                         onChange={(e) => setAgreePersonal(e.target.checked)}
                       />
-                      <span className="checkmark"></span>
-                      Согласен на обработку моих персональных данных
+                      <span className="checkmark"></span> Согласен на обработку
+                      моих персональных данных
                     </label>
                     <label>
                       <input
@@ -288,8 +419,8 @@ export const Schedule: React.FC = () => {
                         checked={agreeRules}
                         onChange={(e) => setAgreeRules(e.target.checked)}
                       />
-                      <span className="checkmark"></span>
-                      Ознакомлен с правилами клуба
+                      <span className="checkmark"></span> Ознакомлен с правилами
+                      клуба
                     </label>
                     <label>
                       <input
@@ -298,11 +429,9 @@ export const Schedule: React.FC = () => {
                         checked={agreeOffer}
                         onChange={(e) => setAgreeOffer(e.target.checked)}
                       />
-                      <span className="checkmark"></span>
-                      Ознакомлен с офертой
+                      <span className="checkmark"></span> Ознакомлен с офертой
                     </label>
                   </div>
-
                   <button type="submit" className="modal-submit-btn">
                     Забронировать место
                   </button>

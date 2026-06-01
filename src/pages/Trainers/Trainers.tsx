@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import "./Trainers.css";
 
 import type { Trainer } from "./trainersData";
@@ -13,6 +13,8 @@ export default function Trainers() {
   const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const handleOpenModal = (trainer: Trainer) => {
     setSelectedTrainer(trainer);
     setIsModalOpen(true);
@@ -22,6 +24,12 @@ export default function Trainers() {
     setIsModalOpen(false);
     setTimeout(() => setSelectedTrainer(null), 300);
   };
+
+  const filteredTrainers = useMemo(() => {
+    return trainers.filter((trainer) =>
+      trainer.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [searchQuery]);
 
   return (
     <>
@@ -37,14 +45,30 @@ export default function Trainers() {
             </p>
           </div>
 
+          <div className="trainers-search-wrap">
+            <input
+              type="text"
+              className="trainers-search-input"
+              placeholder="Поиск тренера по имени..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
           <div className="trainers-grid">
-            {trainers.map((trainer) => (
-              <TrainerCard
-                key={trainer.id}
-                trainer={trainer}
-                onOpenModal={handleOpenModal}
-              />
-            ))}
+            {filteredTrainers.length > 0 ? (
+              filteredTrainers.map((trainer) => (
+                <TrainerCard
+                  key={trainer.id}
+                  trainer={trainer}
+                  onOpenModal={handleOpenModal}
+                />
+              ))
+            ) : (
+              <p className="trainers-no-results">
+                По запросу «{searchQuery}» тренеры не найдены.
+              </p>
+            )}
           </div>
         </div>
       </section>

@@ -96,7 +96,7 @@ function Navbar() {
             </li>
           </ul>
         </div>
-        <div className="profile-wrapper">
+        {/* <div className="profile-wrapper">
           <NavLink className="profile-link" to="/profile">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +114,7 @@ function Navbar() {
             </svg>
             <span>Профиль</span>
           </NavLink>
-        </div>
+        </div> */}
       </div>
       {/* для телефонов */}
       <div
@@ -166,7 +166,7 @@ function Navbar() {
                 Цены
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink
                 className="nav-link"
                 to="/profile"
@@ -174,7 +174,7 @@ function Navbar() {
               >
                 Профиль
               </NavLink>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
