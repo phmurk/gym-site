@@ -93,6 +93,17 @@
   transition: 0.3s ease;
 }
 
+.footer-phone {
+  color: #d1d1d1;
+  text-decoration: none;
+  font-weight: 400;
+  transition: 0.3s ease;
+}
+
+.footer-phone:hover {
+  color: #ff3b3b;
+}
+
 .cont {
   display: flex;
   align-items: center;

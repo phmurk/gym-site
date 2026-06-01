@@ -1,7 +1,318 @@
+import React, { useState, useEffect, type FormEvent } from "react";
+import {
+  scheduleData,
+  type ScheduleItem,
+} from "../../components/Schedule/ScheduleData";
 import "./Schedule.css";
 
-function Schedule() {
-  return <h1>Schedule Page</h1>;
-}
+const getLessonDescription = (title: string) => {
+  const descMap: Record<string, string> = {
+    "МИНИ-ГРУППА":
+      "Тренировка в мини-группе до 5 человек. Индивидуальный подход и контроль техники выполнения упражнений от дежурного тренера.",
+    FITBOXING:
+      "Высокоинтенсивная кардио-тренировка с элементами бокса. Отлично снимает стресс, сжигает калории и развивает координацию.",
+    "BODY SCULPT":
+      "Силовая тренировка на все группы мышц с использованием различного оборудования. Формирует красивый рельеф тела.",
+    STRETCHING:
+      "Тренировка, направленная на развитие гибкости, улучшение подвижности суставов и эластичности мышц.",
+    "ЗДОРОВАЯ СПИНА":
+      "Специальный комплекс упражнений для укрепления мышечного корсета спины, снятия напряжения и улучшения осанки.",
+    "FITNESS MIX":
+      "Динамичная жиросжигающая тренировка, сочетающая в себе элементы аэробики, силовых упражнений и растяжки.",
+    "STEP INTERVAL":
+      "Интервальная тренировка с использованием степ-платформы. Чередование кардио и силовых блоков.",
+    PILATES:
+      "Система упражнений для создания сильного мышечного корсета, улучшения осанки и развития гибкости без ударной нагрузки.",
+    "ФИТНЕС-ЙОГА":
+      "Гармоничное сочетание физических упражнений, дыхательных практик и расслабления. Улучшает баланс и гибкость.",
+    ZUMBA:
+      "Танцевальная фитнес-программа на основе популярных латиноамериканских ритмов. Заряжает энергией и позитивом!",
+    "РАСТЯЖКА + ПРЕСС":
+      "Эффективная комбинация для проработки мышц живота и последующего глубокого растяжения всего тела.",
+    "КРУГОВАЯ ТРЕНИРОВКА":
+      "Высокоинтенсивный тренинг, при котором упражнения выполняются друг за другом по кругу с минимальным отдыхом.",
+    "TOTAL BODY":
+      "Комплексная силовая тренировка для проработки абсолютно всех мышечных групп вашего тела за одно занятие.",
+    "ПРЕСС-БЕДРА-ЯГОДИЦЫ":
+      "Целевая тренировка, направленная на проработку самых проблемных женских зон. Максимальный акцент на низ тела.",
+    "STRETCHING & MFR":
+      "Растяжка в сочетании с миофасциальным релизом (использование массажных роллов) для глубокого расслабления мышц.",
+  };
+  return (
+    descMap[title] ||
+    "Эффективная тренировка под руководством опытного тренера. Подходит для любого уровня подготовки."
+  );
+};
 
+const checkIsBookingAvailable = (
+  lessonTime: string,
+  lessonDate: Date,
+  now: Date,
+) => {
+  const [startStr] = lessonTime.split(" - ");
+  const [hours, minutes] = startStr.split(":").map(Number);
+
+  const classDateTime = new Date(lessonDate);
+  classDateTime.setHours(hours, minutes, 0, 0);
+
+  const diffMs = classDateTime.getTime() - now.getTime();
+
+  const diffHours = diffMs / (1000 * 60 * 60);
+
+  return diffHours >= 3;
+};
+
+export const Schedule: React.FC = () => {
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [orderedDays, setOrderedDays] = useState<any[]>([]);
+  const [selectedLesson, setSelectedLesson] = useState<ScheduleItem | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [agreePersonal, setAgreePersonal] = useState(false);
+  const [agreeRules, setAgreeRules] = useState(false);
+  const [agreeOffer, setAgreeOffer] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const dayNamesRu = [
+      "Воскресенье",
+      "Понедельник",
+      "Вторник",
+      "Среда",
+      "Четверг",
+      "Пятница",
+      "Суббота",
+    ];
+    const today = new Date();
+
+    const weekData = [];
+
+    for (let i = 0; i < 7; i++) {
+      const nextDate = new Date(today);
+      nextDate.setDate(today.getDate() + i);
+
+      const dayName = dayNamesRu[nextDate.getDay()];
+      const dateStr = `${String(nextDate.getDate()).padStart(2, "0")}.${String(nextDate.getMonth() + 1).padStart(2, "0")}`;
+
+      const dayData = scheduleData.find((d) => d.day === dayName);
+
+      weekData.push({
+        dayName: i === 0 ? "Сегодня" : dayName,
+        dateStr,
+        fullDate: nextDate,
+        lessons: dayData ? dayData.lessons : [],
+      });
+    }
+
+    setOrderedDays(weekData);
+  }, []);
+
+  const openModal = (lesson: ScheduleItem, isAvailable: boolean) => {
+    if (!isAvailable) return;
+
+    setSelectedLesson(lesson);
+    setIsModalOpen(true);
+    setIsSubmitted(false);
+    setPhone("+375");
+    setPhoneError("");
+    setAgreePersonal(false);
+    setAgreeRules(false);
+    setAgreeOffer(false);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedLesson(null), 300);
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const cleanedPhone = phone.replace(/\D/g, "");
+    const isValidBelarusPhone = /^375(17|25|29|33|44)\d{7}$/.test(cleanedPhone);
+
+    if (!isValidBelarusPhone) {
+      setPhoneError(
+        "Введите корректный номер РБ (например: +375 29 123-45-67)",
+      );
+      return;
+    }
+
+    setPhoneError("");
+    if (agreePersonal && agreeRules && agreeOffer) {
+      setIsSubmitted(true);
+    }
+  };
+
+  return (
+    <section className="schedule-section">
+      <div className="container">
+        <div className="schedule-header">
+          <h2 className="schedule-main-title">
+            РАСПИСАНИЕ <span>ГРУППОВЫХ</span> ЗАНЯТИЙ
+          </h2>
+          <p className="schedule-subtitle">
+            Выберите день и запишитесь на тренировку заранее
+          </p>
+        </div>
+
+        <div className="schedule-tabs">
+          {orderedDays.map((day, index) => (
+            <button
+              key={index}
+              className={`schedule-tab ${activeTabIndex === index ? "active" : ""}`}
+              onClick={() => setActiveTabIndex(index)}
+            >
+              <span className="tab-day">{day.dayName}</span>
+              <span className="tab-date">{day.dateStr}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="schedule-grid">
+          {orderedDays[activeTabIndex]?.lessons.length > 0 ? (
+            orderedDays[activeTabIndex].lessons.map(
+              (lesson: ScheduleItem, idx: number) => {
+                const isAvailable = checkIsBookingAvailable(
+                  lesson.time,
+                  orderedDays[activeTabIndex].fullDate,
+                  currentTime,
+                );
+
+                return (
+                  <div
+                    key={idx}
+                    className={`lesson-card ${!isAvailable ? "lesson-card-disabled" : ""}`}
+                    onClick={() => openModal(lesson, isAvailable)}
+                  >
+                    <div className="lesson-time">{lesson.time}</div>
+                    <h3 className="lesson-title">{lesson.title}</h3>
+                    <div className="lesson-trainer">
+                      <span className="trainer-icon">👤</span> {lesson.trainer}
+                    </div>
+
+                    {!isAvailable && (
+                      <div className="lesson-closed-badge">Запись закрыта</div>
+                    )}
+                  </div>
+                );
+              },
+            )
+          ) : (
+            <div className="no-lessons">В этот день занятий нет.</div>
+          )}
+        </div>
+      </div>
+
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>
+              ×
+            </button>
+
+            {isSubmitted ? (
+              <div className="success-message">
+                <h3>Успешно!</h3>
+                <p>
+                  Вы забронировали место на занятие{" "}
+                  <span>{selectedLesson?.title}</span>.
+                </p>
+                <p>
+                  Мы ждем вас {orderedDays[activeTabIndex]?.dateStr} в{" "}
+                  {selectedLesson?.time.split(" - ")[0]}
+                </p>
+                <button className="modal-submit-btn" onClick={closeModal}>
+                  Закрыть
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="modal-lesson-info">
+                  <h2>{selectedLesson?.title}</h2>
+                  <p className="modal-time-trainer">
+                    <span>🕒 {selectedLesson?.time}</span>
+                    <span>👤 {selectedLesson?.trainer}</span>
+                  </p>
+                  <p className="modal-desc">
+                    {getLessonDescription(selectedLesson?.title || "")}
+                  </p>
+                </div>
+
+                <form className="booking-form" onSubmit={handleSubmit}>
+                  <h4 className="form-title">Запись на тренировку</h4>
+
+                  <div className="input-group">
+                    <input
+                      type="tel"
+                      placeholder="+375 (XX) XXX-XX-XX"
+                      required
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        setPhoneError("");
+                      }}
+                      className={phoneError ? "error-input" : ""}
+                    />
+                    {phoneError && (
+                      <span className="error-text">{phoneError}</span>
+                    )}
+                  </div>
+
+                  <div className="checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        required
+                        checked={agreePersonal}
+                        onChange={(e) => setAgreePersonal(e.target.checked)}
+                      />
+                      <span className="checkmark"></span>
+                      Согласен на обработку моих персональных данных
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        required
+                        checked={agreeRules}
+                        onChange={(e) => setAgreeRules(e.target.checked)}
+                      />
+                      <span className="checkmark"></span>
+                      Ознакомлен с правилами клуба
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        required
+                        checked={agreeOffer}
+                        onChange={(e) => setAgreeOffer(e.target.checked)}
+                      />
+                      <span className="checkmark"></span>
+                      Ознакомлен с офертой
+                    </label>
+                  </div>
+
+                  <button type="submit" className="modal-submit-btn">
+                    Забронировать место
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
 export default Schedule;
