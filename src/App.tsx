@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy } from "react";
 
-import "./App.css";
 import "./index.css";
 
 import Navbar from "./components/Navbar/Navbar";
@@ -11,11 +11,11 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext";
 import AuthModal from "./components/Auth/AuthModal";
 
-import Home from "./pages/Home/Home";
-import Prices from "./pages/Prices/Prices";
-import Schedule from "./pages/Schedule/Schedule";
-import Trainers from "./pages/Trainers/Trainers";
-import Profile from "./pages/Profile/Profile";
+const Home = lazy(() => import("./pages/Home/Home"));
+const Trainers = lazy(() => import("./pages/Trainers/Trainers"));
+const Schedule = lazy(() => import("./pages/Schedule/Schedule"));
+const Prices = lazy(() => import("./pages/Prices/Prices"));
+const Profile = lazy(() => import("./pages/Profile/Profile"));
 
 function App() {
   return (

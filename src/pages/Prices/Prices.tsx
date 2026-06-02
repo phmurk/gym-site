@@ -18,7 +18,6 @@ function PurchaseModal({
   onClose: () => void;
   planName: string;
 }) {
-  // Достаем юзера и функцию добавления в историю
   const { user, addBooking } = useAuth();
 
   const [name, setName] = useState("");
@@ -32,10 +31,8 @@ function PurchaseModal({
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Сброс формы и предзаполнение при новом открытии
   useEffect(() => {
     if (isOpen) {
-      // Если юзер есть, подставляем его данные, иначе оставляем пустым
       setName(user?.name || "");
       setNameError("");
       setPhone(user?.phone || "+375");
@@ -76,15 +73,14 @@ function PurchaseModal({
 
     if (!isValid) return;
 
-    // --- СОХРАНЕНИЕ В ПРОФИЛЬ ---
     if (user) {
       addBooking({
         id: Date.now().toString(),
-        type: "Абонемент", // Указываем тип, чтобы в профиле была красная плашка "АБОНЕМЕНТ"
+        type: "Абонемент",
         title: planName,
-        date: new Date().toLocaleDateString("ru-RU"), // Дата покупки (сегодняшняя)
-        time: "—", // У абонемента нет конкретного времени
-        trainer: "—", // Тренер тоже не привязан
+        date: new Date().toLocaleDateString("ru-RU"),
+        time: "—",
+        trainer: "—",
         timestamp: new Date().toISOString(),
       });
     }
@@ -182,15 +178,12 @@ function PurchaseModal({
 export default function Prices() {
   const accordionRef = useRef<HTMLDivElement>(null);
 
-  // --- Достаем user и функцию вызова модалки логина ---
   const { user, openAuthModal } = useAuth();
 
-  // Состояние модального окна для главного компонента
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
 
   const handleOpenModal = (planName: string) => {
-    // --- ЗАЩИТА: ПРОВЕРКА АВТОРИЗАЦИИ ---
     if (!user) {
       openAuthModal();
       return;
@@ -251,7 +244,6 @@ export default function Prices() {
           </p>
         </div>
 
-        {/* Передаем функцию открытия модалки */}
         <TopHits onOpenModal={handleOpenModal} />
 
         <div className="all-prices-section">
@@ -270,7 +262,6 @@ export default function Prices() {
         <PricesInfo />
       </div>
 
-      {/* Рендерим модальное окно */}
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

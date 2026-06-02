@@ -8,19 +8,16 @@ function ScrollingText() {
 
   useEffect(() => {
     let position = 0;
-    let direction = 1; // 1 = вправо, -1 = влево
+    let direction = 1;
     let lastScrollY = window.scrollY;
     let animationFrameId: number;
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Скролл вниз -> текст движется вправо (direction = 1)
       if (currentScrollY > lastScrollY) {
         direction = 1;
-      }
-      // Скролл вверх -> текст движется влево (direction = -1)
-      else if (currentScrollY < lastScrollY) {
+      } else if (currentScrollY < lastScrollY) {
         direction = -1;
       }
 
@@ -30,20 +27,14 @@ function ScrollingText() {
     window.addEventListener("scroll", handleScroll);
 
     const animate = () => {
-      // Используем плюс, чтобы direction = 1 двигал вправо (увеличивал X), а -1 влево
       position += 1.2 * direction;
 
       if (trackRef.current) {
-        // Делим общую ширину пополам, так как у нас есть "оригинал" и "клон" для бесшовности
         const trackWidth = trackRef.current.scrollWidth / 2;
 
-        // БЕСШОВНАЯ ЛОГИКА
-        // Если текст уехал слишком далеко вправо (появилась пустота слева):
         if (position > 0) {
           position -= trackWidth;
-        }
-        // Если текст уехал слишком далеко влево (появилась пустота справа):
-        else if (position <= -trackWidth) {
+        } else if (position <= -trackWidth) {
           position += trackWidth;
         }
 
@@ -57,7 +48,7 @@ function ScrollingText() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(animationFrameId); // Очищаем анимацию при демонтировании
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
@@ -67,7 +58,6 @@ function ScrollingText() {
     <section className="running-text-section">
       <div className="running-text-wrapper">
         <div className="running-text-track" ref={trackRef}>
-          {/* Рендерим 12 элементов. Массив делится пополам алгоритмом выше */}
           {[...Array(12)].map((_, index) => (
             <span key={index}>{text}</span>
           ))}

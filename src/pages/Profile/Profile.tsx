@@ -9,14 +9,12 @@ export default function Profile() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Защита роута: если юзера нет, выкидываем на главную
   useEffect(() => {
     if (!user) {
       navigate("/");
     }
   }, [user, navigate]);
 
-  // Пока хук редиректит, ничего не рендерим, чтобы избежать ошибок
   if (!user) return null;
 
   return (
@@ -32,7 +30,6 @@ export default function Profile() {
         </div>
 
         <div className="profile-content">
-          {/* ЛЕВАЯ КОЛОНКА - ИНФОРМАЦИЯ ОБ АККАУНТЕ */}
           <aside className="profile-sidebar">
             <div className="profile-card">
               <div className="profile-avatar">
@@ -61,7 +58,6 @@ export default function Profile() {
             </div>
           </aside>
 
-          {/* ПРАВАЯ КОЛОНКА - ИСТОРИЯ ЗАПИСЕЙ */}
           <section className="profile-main">
             <div className="profile-bookings-header">
               <h3>История записей</h3>
@@ -72,7 +68,6 @@ export default function Profile() {
 
             {user.bookings.length > 0 ? (
               <div className="bookings-grid">
-                {/* Переворачиваем массив, чтобы новые записи были сверху */}
                 {[...user.bookings].reverse().map((booking) => (
                   <div key={booking.id} className="booking-card">
                     <div className="booking-badge">{booking.type}</div>
@@ -104,7 +99,6 @@ export default function Profile() {
                 </Link>
               </div>
             )}
-            {/* --- СЕКЦИЯ ОТЗЫВОВ В ПРОФИЛЕ --- */}
             <div
               className="profile-reviews-section"
               style={{ marginTop: "50px" }}

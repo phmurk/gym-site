@@ -122,10 +122,6 @@
   }
 }
 
-/* =========================================
-   МОДАЛЬНОЕ ОКНО ПОКУПКИ
-   ========================================= */
-
 .prices-modal-overlay {
   position: fixed;
   inset: 0;
@@ -195,7 +191,6 @@
   font-size: 16px;
 }
 
-/* Поля ввода */
 .prices-input-group {
   margin-bottom: 18px;
 }
@@ -229,7 +224,6 @@
   padding-left: 5px;
 }
 
-/* Кнопка отправки */
 .prices-submit-btn {
   width: 100%;
   background: #ff3b3b;
@@ -254,7 +248,6 @@
   box-shadow: 0 10px 20px rgba(255, 59, 59, 0.3);
 }
 
-/* Сообщение об успехе */
 .prices-success-message {
   text-align: center;
   padding: 20px 0;
@@ -278,7 +271,6 @@
   font-weight: 700;
 }
 
-/* Адаптив модалки */
 @media (max-width: 576px) {
   .prices-modal {
     padding: 30px 20px;

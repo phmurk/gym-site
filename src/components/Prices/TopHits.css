@@ -21,7 +21,6 @@
   transform: translateY(-10px);
 }
 
-/* Специфичные подсветки для 1, 2 и 3 места */
 .hit-card-1 {
   border-color: #ffd700;
   box-shadow: 0 10px 40px rgba(255, 215, 0, 0.1);

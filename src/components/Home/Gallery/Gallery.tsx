@@ -115,6 +115,12 @@ function ScrollGallery() {
 
           <button
             className="gallery-play-btn"
+            aria-label={
+              isPlaying ? "Остановить автопрокрутку" : "Запустить автопрокрутку"
+            }
+            title={
+              isPlaying ? "Остановить автопрокрутку" : "Запустить автопрокрутку"
+            }
             onClick={() => setIsPlaying(!isPlaying)}
           >
             {isPlaying ? (

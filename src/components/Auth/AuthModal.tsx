@@ -1,16 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "../../context/AuthContext"; // Убедитесь, что путь правильный
+import { useAuth } from "../../context/AuthContext";
 import "./AuthModal.css";
 
 export default function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, login, register } = useAuth();
 
-  // Режим: true = Вход, false = Регистрация
   const [isLoginMode, setIsLoginMode] = useState(true);
 
-  // Состояния полей
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("+375");
@@ -25,11 +23,9 @@ export default function AuthModal() {
     setErrorMsg("");
 
     if (isLoginMode) {
-      // Логика входа
       const error = login(email, password);
       if (error) setErrorMsg(error);
     } else {
-      // Логика регистрации
       if (name.trim().length < 2) {
         return setErrorMsg("Имя должно содержать минимум 2 символа");
       }

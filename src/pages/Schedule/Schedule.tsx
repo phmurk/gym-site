@@ -66,7 +66,6 @@ const checkIsBookingAvailable = (
   return diffHours >= 3;
 };
 
-// --- НОВАЯ ФУНКЦИЯ: Проверка, записан ли уже пользователь на это занятие ---
 const checkIfBooked = (
   userBookings: any[],
   lessonTitle: string,
@@ -310,14 +309,12 @@ export const Schedule: React.FC = () => {
                   {day.lessons.length > 0 ? (
                     day.lessons.map(
                       (lesson: ScheduleItem, lessonIdx: number) => {
-                        // Проверяем доступность по времени
                         const isAvailable = checkIsBookingAvailable(
                           lesson.time,
                           day.fullDate,
                           currentTime,
                         );
 
-                        // Проверяем, записан ли уже пользователь
                         const isBooked = user
                           ? checkIfBooked(
                               user.bookings,
@@ -327,7 +324,6 @@ export const Schedule: React.FC = () => {
                             )
                           : false;
 
-                        // Карточка блокируется, если время вышло ИЛИ если юзер уже записан
                         const isCardDisabled = !isAvailable || isBooked;
 
                         return (
@@ -335,7 +331,6 @@ export const Schedule: React.FC = () => {
                             key={lessonIdx}
                             className={`lesson-card ${isCardDisabled ? "lesson-card-disabled" : ""}`}
                             onClick={() => {
-                              // Если карточка заблокирована из-за того, что юзер уже записан — ничего не делаем
                               if (isBooked) return;
                               openModal(lesson, isAvailable, day);
                             }}
@@ -347,14 +342,12 @@ export const Schedule: React.FC = () => {
                               {lesson.trainer}
                             </div>
 
-                            {/* Вывод плашки "Вы уже записаны" */}
                             {isBooked && (
                               <div className="lesson-booked-badge">
                                 Вы уже записаны
                               </div>
                             )}
 
-                            {/* Вывод плашки "Запись закрыта" (если время вышло и он НЕ был записан) */}
                             {!isAvailable && !isBooked && (
                               <div className="lesson-closed-badge">
                                 Запись закрыта
@@ -378,7 +371,6 @@ export const Schedule: React.FC = () => {
         </div>
       </div>
 
-      {/* Модальное окно оставляем без изменений */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>

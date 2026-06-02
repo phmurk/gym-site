@@ -63,7 +63,7 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 40px; /* или любое другое расстояние */
+  gap: 40px;
 }
 
 .nav-links .nav-link {
@@ -242,10 +242,6 @@ body {
   color: #ff3b3b;
   text-decoration: underline;
 }
-
-/* =========================================
-   КНОПКИ АВТОРИЗАЦИИ (МОБИЛЬНЫЕ)
-   ========================================= */
 
 .auth-mobile-item {
   width: 100%;

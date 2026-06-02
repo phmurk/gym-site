@@ -1,6 +1,4 @@
 import "./Navbar.css";
-// import logo from "../../assets/icons/logo.svg";
-// import defaultAvatar from "../../assets/icons/default-user-avatar.svg";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Offcanvas } from "bootstrap";
@@ -10,7 +8,6 @@ function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Достаем юзера и нужные функции из контекста
   const { user, openAuthModal, logout } = useAuth();
 
   useEffect(() => {
@@ -63,6 +60,7 @@ function Navbar() {
 
         <button
           className="navbar-toggler custom-toggler"
+          aria-label="Открыть меню"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#mobileMenu"
@@ -70,7 +68,6 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* --- ДЕСКТОПНОЕ МЕНЮ --- */}
         <div className="desktop-menu">
           <ul className="navbar-nav nav-links">
             <li className="nav-item">
@@ -96,7 +93,6 @@ function Navbar() {
           </ul>
         </div>
 
-        {/* --- ПРОФИЛЬ / КНОПКА ВОЙТИ (ДЕСКТОП) --- */}
         <div className="profile-wrapper">
           {user ? (
             <>
@@ -130,7 +126,6 @@ function Navbar() {
         </div>
       </div>
 
-      {/* --- МОБИЛЬНОЕ МЕНЮ --- */}
       <div
         className="offcanvas offcanvas-end mobile-offcanvas"
         tabIndex={-1}
@@ -179,7 +174,6 @@ function Navbar() {
               </NavLink>
             </li>
 
-            {/* АВТОРИЗАЦИЯ ДЛЯ МОБИЛОК */}
             <li className="nav-item auth-mobile-item">
               {user ? (
                 <>

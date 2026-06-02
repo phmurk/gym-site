@@ -16,7 +16,7 @@ export interface User {
   password: string;
   bookings: any[];
   createdAt: string;
-  reviews?: any[]; // <--- ДОБАВИЛИ МАССИВ ОТЗЫВОВ
+  reviews?: any[];
 }
 
 interface AuthContextType {
@@ -33,7 +33,7 @@ interface AuthContextType {
   ) => string | null;
   logout: () => void;
   addBooking: (booking: any) => void;
-  addReview: (text: string) => void; // <--- ДОБАВИЛИ ФУНКЦИЮ
+  addReview: (text: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -112,7 +112,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     updateUserInStorage(updatedUser);
   };
 
-  // --- НОВАЯ ФУНКЦИЯ ДЛЯ ОТЗЫВОВ ---
   const addReview = (text: string) => {
     if (!user) return;
 
@@ -123,7 +122,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       date: new Date().toLocaleDateString("ru-RU"),
     };
 
-    // 1. Добавляем отзыв в профиль пользователя
     const updatedUser = {
       ...user,
       reviews: [...(user.reviews || []), newReview],
@@ -131,15 +129,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(updatedUser);
     updateUserInStorage(updatedUser);
 
-    // 2. Добавляем отзыв в ГЛОБАЛЬНЫЙ массив отзывов на сайте (чтобы выводить на главной)
     const globalReviews = JSON.parse(
       localStorage.getItem("globalReviews") || "[]",
     );
-    globalReviews.unshift(newReview); // unshift добавляет в НАЧАЛО массива
+    globalReviews.unshift(newReview);
     localStorage.setItem("globalReviews", JSON.stringify(globalReviews));
   };
 
-  // Вспомогательная функция для обновления localStorage
   const updateUserInStorage = (updatedUser: User) => {
     const allUsers: User[] = JSON.parse(localStorage.getItem("users") || "[]");
     const userIndex = allUsers.findIndex((u) => u.id === updatedUser.id);

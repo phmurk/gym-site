@@ -116,13 +116,13 @@
   }
 
   .mission-stats {
-    grid-template-columns: 1fr; /* Одна колонка на мобильных */
+    grid-template-columns: 1fr;
     gap: 15px;
   }
 
   .mission-stat {
     padding: 25px 20px;
-    flex-direction: row; /* На мобильном можно сделать в строку: Цифра - Текст */
+    flex-direction: row;
     justify-content: space-between;
     text-align: left;
   }

@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import "./Hero.css";
-import heroImage from "../../../assets/images/home_hero_copy.png";
+import heroImage from "../../../assets/images/home_hero_copy.webp";
 
 const TRAINERS_LIST = [
   "Любой тренер",
@@ -32,10 +32,8 @@ const TIMES_LIST = ["🌅 Утром", "🌞 Днём", "🌙 Вечером"];
 function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Текущий шаг квиза (от 1 до 9)
   const [step, setStep] = useState(1);
 
-  // Данные пользователя
   const [name, setName] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -44,18 +42,15 @@ function Hero() {
   const [needTrainer, setNeedTrainer] = useState<boolean | null>(null);
   const [selectedTrainer, setSelectedTrainer] = useState("Любой тренер");
 
-  // Контакты (последний шаг)
   const [phone, setPhone] = useState("+375");
   const [email, setEmail] = useState("");
   const [wantConsultation, setWantConsultation] = useState(false);
 
-  // Ошибки
   const [errorMsg, setErrorMsg] = useState("");
 
   const openModal = () => {
     setIsModalOpen(true);
     setStep(1);
-    // Сброс данных при новом открытии
     setName("");
     setHeight("");
     setWeight("");
@@ -71,7 +66,6 @@ function Hero() {
 
   const closeModal = () => setIsModalOpen(false);
 
-  // --- ЛОГИКА ПЕРЕХОДА И ВАЛИДАЦИИ ---
   const handleNext = () => {
     setErrorMsg("");
 
@@ -104,7 +98,6 @@ function Hero() {
     setStep(step - 1);
   };
 
-  // --- ФУНКЦИИ РАСЧЕТА ---
   const getBMI = () => {
     const h = Number(height) / 100;
     const w = Number(weight);
@@ -162,7 +155,6 @@ function Hero() {
     );
   };
 
-  // Финальная отправка
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
@@ -172,7 +164,6 @@ function Hero() {
       return setErrorMsg("Некорректный номер РБ (пример: +375 29 123-45-67)");
     }
 
-    // Email необязательный, проверяем только если ввели
     if (
       email.trim().length > 0 &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
@@ -180,7 +171,7 @@ function Hero() {
       return setErrorMsg("Некорректный формат Email");
     }
 
-    setStep(9); // Шаг успеха
+    setStep(9);
   };
 
   return (
@@ -208,7 +199,6 @@ function Hero() {
               ×
             </button>
 
-            {/* Прогресс-бар (шаги 2-8) */}
             {step > 1 && step < 9 && (
               <div className="quiz-progress-bar">
                 <div
@@ -219,7 +209,6 @@ function Hero() {
             )}
 
             <div className="quiz-body">
-              {/* ШАГ 1: Приветствие */}
               {step === 1 && (
                 <div className="quiz-step-center">
                   <span className="quiz-emoji">
@@ -246,7 +235,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 2: Имя */}
               {step === 2 && (
                 <div className="quiz-step">
                   <h2>Как тебя зовут?</h2>
@@ -265,7 +253,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 3: Рост и вес */}
               {step === 3 && (
                 <div className="quiz-step">
                   <h2>Твои параметры</h2>
@@ -298,7 +285,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 4: ИМТ */}
               {step === 4 && (
                 <div className="quiz-step-center">
                   <h2>Результат ИМТ</h2>
@@ -315,7 +301,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 5: Цель */}
               {step === 5 && (
                 <div className="quiz-step">
                   <h2>{name}, какая у тебя главная цель?</h2>
@@ -337,7 +322,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 6: Время */}
               {step === 6 && (
                 <div className="quiz-step">
                   <h2>Когда удобнее заниматься?</h2>
@@ -359,7 +343,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 7: Тренер */}
               {step === 7 && (
                 <div className="quiz-step">
                   <h2>Нужен ли персональный тренер?</h2>
@@ -411,7 +394,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 8: Результат и Форма */}
               {step === 8 && (
                 <div className="quiz-step">
                   <div className="quiz-recommendation">
@@ -479,7 +461,6 @@ function Hero() {
                 </div>
               )}
 
-              {/* ШАГ 9: Успех */}
               {step === 9 && (
                 <div className="quiz-step-center">
                   <span className="quiz-emoji">
@@ -507,7 +488,6 @@ function Hero() {
               )}
             </div>
 
-            {/* Навигационные кнопки (Назад / Далее) */}
             {step > 1 && step < 8 && step !== 4 && (
               <div className="quiz-navigation">
                 <button
@@ -525,7 +505,6 @@ function Hero() {
               </div>
             )}
 
-            {/* Для шага 4 (ИМТ) кнопка "Назад" слева, а "Продолжить" уже есть по центру */}
             {step === 4 && (
               <div
                 className="quiz-navigation"

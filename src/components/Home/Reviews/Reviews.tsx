@@ -60,7 +60,6 @@ function Reviews() {
   const [reviewText, setReviewText] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // При загрузке страницы достаем кастомные отзывы из localStorage и ставим их в начало!
   useEffect(() => {
     const globalReviews = JSON.parse(
       localStorage.getItem("globalReviews") || "[]",
@@ -68,25 +67,22 @@ function Reviews() {
     setAllReviews([...globalReviews, ...initialReviews]);
   }, []);
 
-  // Клик по кнопке "Оставить отзыв"
   const handleWriteReviewClick = () => {
     if (!user) {
-      openAuthModal(); // Требуем авторизацию
+      openAuthModal();
     } else {
-      setIsModalOpen(true); // Открываем окно написания
+      setIsModalOpen(true);
     }
   };
 
-  // Отправка отзыва
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
     if (reviewText.trim().length < 10) {
       return setErrorMsg("Отзыв слишком короткий. Напишите хотя бы пару слов!");
     }
 
-    addReview(reviewText); // Сохраняем (через контекст)
+    addReview(reviewText);
 
-    // Мгновенно обновляем интерфейс, чтобы отзыв появился первым в списке
     const newReview = {
       name: user?.name,
       text: reviewText,
@@ -144,7 +140,6 @@ function Reviews() {
         </div>
       </div>
 
-      {/* Модальное окно для написания отзыва */}
       {isModalOpen && (
         <div
           className="review-modal-overlay"

@@ -1,5 +1,5 @@
 .reviews {
-  padding: 80px 0;
+  padding: 80px 0 0;
   background-color: #050505;
   color: white;
 }
@@ -174,16 +174,12 @@
 
 .review-button-primary {
   background-color: #ff3b3b;
-  color: #fff;
+  color: #ffffff;
 }
 
 .review-button-primary:hover {
   background-color: #d32f2f;
 }
-
-/* =========================================
-   МОДАЛЬНОЕ ОКНО ДЛЯ ОТЗЫВА
-   ========================================= */
 
 .review-modal-overlay {
   position: fixed;
