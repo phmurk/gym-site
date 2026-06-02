@@ -574,3 +574,32 @@
     font-size: 24px;
   }
 }
+
+.lesson-closed-badge {
+  background: rgba(255, 59, 59, 0.15);
+  color: #ff3b3b;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 8px;
+  margin-top: 10px;
+  border-radius: 8px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 59, 59, 0.3);
+}
+
+/* --- НОВАЯ плашка "Вы уже записаны" --- */
+.lesson-booked-badge {
+  background: rgba(46, 204, 113, 0.15); /* Зеленый полупрозрачный фон */
+  color: #2ecc71; /* Зеленый текст */
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 8px;
+  margin-top: 10px;
+  border-radius: 8px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}

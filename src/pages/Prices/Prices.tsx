@@ -7,6 +7,7 @@ import { PricesCategories } from "../../components/Prices/PricesData";
 import TopHits from "../../components/Prices/TopHits";
 import PricesGroup from "../../components/Prices/PricesGroup";
 import PricesInfo from "../../components/Prices/PricesInfo";
+import { useAuth } from "../../context/AuthContext";
 
 function PurchaseModal({
   isOpen,
@@ -17,6 +18,9 @@ function PurchaseModal({
   onClose: () => void;
   planName: string;
 }) {
+  // Достаем юзера и функцию добавления в историю
+  const { user, addBooking } = useAuth();
+
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
 
@@ -28,14 +32,15 @@ function PurchaseModal({
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Сброс формы при новом открытии
+  // Сброс формы и предзаполнение при новом открытии
   useEffect(() => {
     if (isOpen) {
-      setName("");
+      // Если юзер есть, подставляем его данные, иначе оставляем пустым
+      setName(user?.name || "");
       setNameError("");
-      setPhone("+375");
+      setPhone(user?.phone || "+375");
       setPhoneError("");
-      setEmail("");
+      setEmail(user?.email || "");
       setEmailError("");
       setIsSubmitted(false);
     }
@@ -70,6 +75,19 @@ function PurchaseModal({
     }
 
     if (!isValid) return;
+
+    // --- СОХРАНЕНИЕ В ПРОФИЛЬ ---
+    if (user) {
+      addBooking({
+        id: Date.now().toString(),
+        type: "Абонемент", // Указываем тип, чтобы в профиле была красная плашка "АБОНЕМЕНТ"
+        title: planName,
+        date: new Date().toLocaleDateString("ru-RU"), // Дата покупки (сегодняшняя)
+        time: "—", // У абонемента нет конкретного времени
+        trainer: "—", // Тренер тоже не привязан
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     setIsSubmitted(true);
   };
@@ -164,11 +182,20 @@ function PurchaseModal({
 export default function Prices() {
   const accordionRef = useRef<HTMLDivElement>(null);
 
+  // --- Достаем user и функцию вызова модалки логина ---
+  const { user, openAuthModal } = useAuth();
+
   // Состояние модального окна для главного компонента
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
 
   const handleOpenModal = (planName: string) => {
+    // --- ЗАЩИТА: ПРОВЕРКА АВТОРИЗАЦИИ ---
+    if (!user) {
+      openAuthModal();
+      return;
+    }
+
     setSelectedPlan(planName);
     setIsModalOpen(true);
   };

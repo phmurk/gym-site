@@ -155,3 +155,135 @@
     margin-top: 30px;
   }
 }
+
+.review-date {
+  font-size: 14px;
+  color: #ff3b3b;
+  font-weight: 500;
+  margin-left: 5px;
+}
+
+.review-buttons-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 60px;
+  flex-wrap: wrap;
+}
+
+.review-button-primary {
+  background-color: #ff3b3b;
+  color: #fff;
+}
+
+.review-button-primary:hover {
+  background-color: #d32f2f;
+}
+
+/* =========================================
+   МОДАЛЬНОЕ ОКНО ДЛЯ ОТЗЫВА
+   ========================================= */
+
+.review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.review-modal {
+  background: #111111;
+  border: 1px solid rgba(255, 59, 59, 0.3);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  padding: 40px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.review-modal h2 {
+  font-size: 26px;
+  margin: 0 0 10px 0;
+}
+
+.review-modal p {
+  color: #cfcfcf;
+  font-size: 15px;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.review-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #d1d1d1;
+  font-size: 32px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.review-modal-close:hover {
+  color: #ff3b3b;
+  background: rgba(255, 59, 59, 0.1);
+}
+
+.review-textarea {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  resize: none;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+
+.review-textarea:focus {
+  border-color: #ff3b3b;
+}
+
+.review-textarea.error-border {
+  border-color: #ff3b3b;
+}
+
+.review-error-text {
+  color: #ff3b3b;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.review-submit-btn {
+  width: 100%;
+  background: #ff3b3b;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+
+.review-submit-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}

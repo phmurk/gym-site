@@ -1,0 +1,255 @@
+.profile-page {
+  padding: 60px 0 100px;
+  background-color: #111111;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.profile-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.profile-title span {
+  color: #ff3b3b;
+}
+
+.profile-subtitle {
+  font-size: 16px;
+  color: #cfcfcf;
+}
+
+.profile-content {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* =========================================
+   САЙДБАР (ИНФО О ПОЛЬЗОВАТЕЛЕ)
+   ========================================= */
+.profile-card {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 59, 59, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 59, 59, 0.1);
+  border: 2px solid #ff3b3b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 700;
+  color: #ff3b3b;
+  margin-bottom: 20px;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.profile-info-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-info-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.info-label {
+  color: #cfcfcf;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #fff;
+}
+
+.profile-logout-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #ff3b3b;
+  border: 1px solid #ff3b3b;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-logout-btn:hover {
+  background: #ff3b3b;
+  color: #fff;
+}
+
+/* =========================================
+   ОСНОВНАЯ ЧАСТЬ (ЗАПИСИ)
+   ========================================= */
+.profile-main {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.profile-bookings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-bookings-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.bookings-count {
+  background: rgba(255, 59, 59, 0.15);
+  color: #ff3b3b;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Сетка карточек */
+.bookings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.booking-card {
+  background: rgba(255, 59, 59, 0.03);
+  border: 1px solid rgba(255, 59, 59, 0.15);
+  padding: 20px;
+  border-radius: 15px;
+  position: relative;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 59, 59, 0.4);
+}
+
+.booking-badge {
+  display: inline-block;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.booking-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.booking-details p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #cfcfcf;
+  display: flex;
+  align-items: center;
+}
+
+.booking-details p span {
+  display: inline-block;
+  width: 70px;
+  color: #999;
+}
+
+/* Пустое состояние (когда нет записей) */
+.bookings-empty {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.empty-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.bookings-empty h4 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.bookings-empty p {
+  color: #cfcfcf;
+  margin-bottom: 25px;
+}
+
+.empty-btn {
+  display: inline-block;
+  background: #ff3b3b;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.empty-btn:hover {
+  background: #d32f2f;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Адаптив */
+@media (max-width: 992px) {
+  .profile-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-bookings-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}

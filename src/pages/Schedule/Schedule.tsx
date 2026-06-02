@@ -4,6 +4,7 @@ import {
   type ScheduleItem,
 } from "../../components/Schedule/ScheduleData";
 import "./Schedule.css";
+import { useAuth } from "../../context/AuthContext";
 
 const uniqueClasses = Array.from(
   new Set(scheduleData.flatMap((d) => d.lessons.map((l) => l.title))),
@@ -65,7 +66,25 @@ const checkIsBookingAvailable = (
   return diffHours >= 3;
 };
 
+// --- НОВАЯ ФУНКЦИЯ: Проверка, записан ли уже пользователь на это занятие ---
+const checkIfBooked = (
+  userBookings: any[],
+  lessonTitle: string,
+  lessonDate: string,
+  lessonTime: string,
+) => {
+  if (!userBookings || userBookings.length === 0) return false;
+  return userBookings.some(
+    (booking) =>
+      booking.title === lessonTitle &&
+      booking.date === lessonDate &&
+      booking.time === lessonTime,
+  );
+};
+
 export const Schedule: React.FC = () => {
+  const { user, openAuthModal, addBooking } = useAuth();
+
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [orderedDays, setOrderedDays] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -78,12 +97,14 @@ export const Schedule: React.FC = () => {
   );
   const [selectedDay, setSelectedDay] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeRules, setAgreeRules] = useState(false);
   const [agreeOffer, setAgreeOffer] = useState(false);
@@ -140,16 +161,24 @@ export const Schedule: React.FC = () => {
     dayObj: any,
   ) => {
     if (!isAvailable) return;
+
+    if (!user) {
+      openAuthModal();
+      return;
+    }
+
     setSelectedLesson(lesson);
     setSelectedDay(dayObj);
     setIsModalOpen(true);
     setIsSubmitted(false);
-    setName("");
+
+    setName(user.name);
     setNameError("");
-    setPhone("+375");
+    setPhone(user.phone);
     setPhoneError("");
-    setEmail("");
+    setEmail(user.email);
     setEmailError("");
+
     setAgreePersonal(false);
     setAgreeRules(false);
     setAgreeOffer(false);
@@ -191,7 +220,19 @@ export const Schedule: React.FC = () => {
 
     if (!isValid) return;
 
-    if (agreePersonal && agreeRules && agreeOffer) setIsSubmitted(true);
+    if (agreePersonal && agreeRules && agreeOffer) {
+      addBooking({
+        id: Date.now().toString(),
+        type: "Групповое занятие",
+        title: selectedLesson?.title,
+        trainer: selectedLesson?.trainer,
+        date: selectedDay?.dateStr,
+        time: selectedLesson?.time,
+        timestamp: new Date().toISOString(),
+      });
+
+      setIsSubmitted(true);
+    }
   };
 
   return (
@@ -269,16 +310,35 @@ export const Schedule: React.FC = () => {
                   {day.lessons.length > 0 ? (
                     day.lessons.map(
                       (lesson: ScheduleItem, lessonIdx: number) => {
+                        // Проверяем доступность по времени
                         const isAvailable = checkIsBookingAvailable(
                           lesson.time,
                           day.fullDate,
                           currentTime,
                         );
+
+                        // Проверяем, записан ли уже пользователь
+                        const isBooked = user
+                          ? checkIfBooked(
+                              user.bookings,
+                              lesson.title,
+                              day.dateStr,
+                              lesson.time,
+                            )
+                          : false;
+
+                        // Карточка блокируется, если время вышло ИЛИ если юзер уже записан
+                        const isCardDisabled = !isAvailable || isBooked;
+
                         return (
                           <div
                             key={lessonIdx}
-                            className={`lesson-card ${!isAvailable ? "lesson-card-disabled" : ""}`}
-                            onClick={() => openModal(lesson, isAvailable, day)}
+                            className={`lesson-card ${isCardDisabled ? "lesson-card-disabled" : ""}`}
+                            onClick={() => {
+                              // Если карточка заблокирована из-за того, что юзер уже записан — ничего не делаем
+                              if (isBooked) return;
+                              openModal(lesson, isAvailable, day);
+                            }}
                           >
                             <div className="lesson-time">{lesson.time}</div>
                             <h3 className="lesson-title">{lesson.title}</h3>
@@ -286,7 +346,16 @@ export const Schedule: React.FC = () => {
                               <span className="trainer-icon">👤</span>{" "}
                               {lesson.trainer}
                             </div>
-                            {!isAvailable && (
+
+                            {/* Вывод плашки "Вы уже записаны" */}
+                            {isBooked && (
+                              <div className="lesson-booked-badge">
+                                Вы уже записаны
+                              </div>
+                            )}
+
+                            {/* Вывод плашки "Запись закрыта" (если время вышло и он НЕ был записан) */}
+                            {!isAvailable && !isBooked && (
                               <div className="lesson-closed-badge">
                                 Запись закрыта
                               </div>
@@ -309,6 +378,7 @@ export const Schedule: React.FC = () => {
         </div>
       </div>
 
+      {/* Модальное окно оставляем без изменений */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
@@ -444,4 +514,5 @@ export const Schedule: React.FC = () => {
     </section>
   );
 };
+
 export default Schedule;

@@ -5,7 +5,7 @@ import "./Hero.css";
 import heroImage from "../../../assets/images/home_hero_copy.png";
 
 const TRAINERS_LIST = [
-  "Не определился",
+  "Любой тренер",
   "Андрей Бурмейстер",
   "Ольга Лобацкая",
   "Сергей Клавсуть",
@@ -22,105 +22,169 @@ const TRAINERS_LIST = [
 const GOALS_LIST = [
   "Похудеть",
   "Набрать мышечную массу",
+  "Поддерживать форму",
   "Улучшить здоровье",
-  "Повысить выносливость",
-  "Пока не знаю",
+  "Увеличить выносливость",
 ];
+
+const TIMES_LIST = ["🌅 Утром", "🌞 Днём", "🌙 Вечером"];
 
 function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Состояния полей формы
+  // Текущий шаг квиза (от 1 до 9)
+  const [step, setStep] = useState(1);
+
+  // Данные пользователя
   const [name, setName] = useState("");
-  const [nameError, setNameError] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [goal, setGoal] = useState("");
+  const [time, setTime] = useState("");
+  const [needTrainer, setNeedTrainer] = useState<boolean | null>(null);
+  const [selectedTrainer, setSelectedTrainer] = useState("Любой тренер");
 
+  // Контакты (последний шаг)
   const [phone, setPhone] = useState("+375");
-  const [phoneError, setPhoneError] = useState("");
-
   const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [wantConsultation, setWantConsultation] = useState(false);
 
-  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
-  const [preferredTime, setPreferredTime] = useState("Без разницы");
-
-  const [needTrainer, setNeedTrainer] = useState(false);
-  const [selectedTrainer, setSelectedTrainer] = useState("");
-
-  const [needMembershipHelp, setNeedMembershipHelp] = useState(false);
-
-  // Обработчик выбора целей
-  const toggleGoal = (goal: string) => {
-    if (selectedGoals.includes(goal)) {
-      setSelectedGoals(selectedGoals.filter((g) => g !== goal));
-    } else {
-      setSelectedGoals([...selectedGoals, goal]);
-    }
-  };
+  // Ошибки
+  const [errorMsg, setErrorMsg] = useState("");
 
   const openModal = () => {
     setIsModalOpen(true);
-    setIsSubmitted(false);
-    // Сброс формы при открытии
+    setStep(1);
+    // Сброс данных при новом открытии
     setName("");
-    setNameError("");
+    setHeight("");
+    setWeight("");
+    setGoal("");
+    setTime("");
+    setNeedTrainer(null);
+    setSelectedTrainer("Любой тренер");
     setPhone("+375");
-    setPhoneError("");
     setEmail("");
-    setEmailError("");
-    setSelectedGoals([]);
-    setPreferredTime("Без разницы");
-    setNeedTrainer(false);
-    setSelectedTrainer("");
-    setNeedMembershipHelp(false);
+    setWantConsultation(false);
+    setErrorMsg("");
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeModal = () => setIsModalOpen(false);
+
+  // --- ЛОГИКА ПЕРЕХОДА И ВАЛИДАЦИИ ---
+  const handleNext = () => {
+    setErrorMsg("");
+
+    if (step === 2) {
+      const nameRegex = /^[A-Za-zА-Яа-яЁё\s]{2,}$/;
+      if (!nameRegex.test(name.trim())) {
+        return setErrorMsg("Имя должно содержать минимум 2 буквы (без цифр)");
+      }
+    }
+
+    if (step === 3) {
+      const h = Number(height);
+      const w = Number(weight);
+      if (!h || h < 120 || h > 250)
+        return setErrorMsg("Введите корректный рост (120 - 250 см)");
+      if (!w || w < 30 || w > 250)
+        return setErrorMsg("Введите корректный вес (30 - 250 кг)");
+    }
+
+    if (step === 5 && !goal) return setErrorMsg("Пожалуйста, выберите цель");
+    if (step === 6 && !time) return setErrorMsg("Пожалуйста, выберите время");
+    if (step === 7 && needTrainer === null)
+      return setErrorMsg("Пожалуйста, сделайте выбор");
+
+    setStep(step + 1);
   };
 
+  const handleBack = () => {
+    setErrorMsg("");
+    setStep(step - 1);
+  };
+
+  // --- ФУНКЦИИ РАСЧЕТА ---
+  const getBMI = () => {
+    const h = Number(height) / 100;
+    const w = Number(weight);
+    return (w / (h * h)).toFixed(1);
+  };
+
+  const getBMICategory = (bmiStr: string) => {
+    const bmi = Number(bmiStr);
+    if (bmi < 18.5)
+      return {
+        text: "Недостаточный вес",
+        desc: "Вам стоит сфокусироваться на наборе массы и правильном питании.",
+      };
+    if (bmi >= 18.5 && bmi <= 24.9)
+      return {
+        text: "Нормальный вес",
+        desc: "Отличный показатель 👍 Ваш вес находится в пределах нормы.",
+      };
+    if (bmi >= 25 && bmi <= 29.9)
+      return {
+        text: "Избыточный вес",
+        desc: "Рекомендуем добавить кардио-нагрузки и скорректировать рацион.",
+      };
+    return {
+      text: "Ожирение",
+      desc: "Вам подойдет бережный старт под контролем тренера без ударных нагрузок на суставы.",
+    };
+  };
+
+  const getRecommendation = () => {
+    if (goal === "Похудеть" || goal === "Увеличить выносливость") {
+      return (
+        <ul className="quiz-rec-list">
+          <li>3-4 тренировки в неделю</li>
+          <li>Кардио + интервальные силовые тренировки (FITNESS MIX)</li>
+          <li>Персональный тренер ускорит результат и поможет с диетой</li>
+        </ul>
+      );
+    }
+    if (goal === "Набрать мышечную массу") {
+      return (
+        <ul className="quiz-rec-list">
+          <li>3-4 силовые тренировки в неделю (тренажерный зал)</li>
+          <li>Профицит калорий и контроль белка в питании</li>
+          <li>Работа с тренером для постановки базовой техники</li>
+        </ul>
+      );
+    }
+    return (
+      <ul className="quiz-rec-list">
+        <li>2-3 тренировки в неделю (Йога, Здоровая спина, Пилатес)</li>
+        <li>Умеренные нагрузки для поддержания тонуса</li>
+        <li>Бассейн и растяжка для расслабления</li>
+      </ul>
+    );
+  };
+
+  // Финальная отправка
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    let isValid = true;
+    setErrorMsg("");
 
-    // 1. Валидация Имени
-    if (name.trim().length < 2) {
-      setNameError("Введите корректное имя");
-      isValid = false;
-    } else {
-      setNameError("");
-    }
-
-    // 2. Валидация Телефона РБ
     const cleanedPhone = phone.replace(/\D/g, "");
     if (!/^375(17|25|29|33|44)\d{7}$/.test(cleanedPhone)) {
-      setPhoneError("Некорректный номер РБ (пример: +375 29 123-45-67)");
-      isValid = false;
-    } else {
-      setPhoneError("");
+      return setErrorMsg("Некорректный номер РБ (пример: +375 29 123-45-67)");
     }
 
-    // 3. Валидация Email
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setEmailError("Некорректный email");
-      isValid = false;
-    } else {
-      setEmailError("");
+    // Email необязательный, проверяем только если ввели
+    if (
+      email.trim().length > 0 &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+    ) {
+      return setErrorMsg("Некорректный формат Email");
     }
 
-    if (!isValid) return;
-
-    // Если всё правильно, показываем сообщение об успехе
-    setIsSubmitted(true);
+    setStep(9); // Шаг успеха
   };
 
   return (
-    <section
-      className="hero"
-      style={{
-        backgroundImage: `url(${heroImage})`,
-      }}
-    >
+    <section className="hero" style={{ backgroundImage: `url(${heroImage})` }}>
       <div className="hero-overlay"></div>
       <div className="container hero-content">
         <h1 className="hero-title">
@@ -129,192 +193,351 @@ function Hero() {
           КОТОРЫЙ БЬЁТСЯ В ТАКТ ТВОИМ АМБИЦИЯМ.
         </h1>
         <p className="hero-subtitle">FitPulse. Место, где железо оживает.</p>
-
-        {/* Кнопка открытия модального окна */}
         <button className="hero-button" onClick={openModal}>
           ВОЙТИ В РИТМ
         </button>
-
         <p className="hero-button-text">
           Остальное — просто спортзалы. FitPulse — твоя сборка лучшей версии.
         </p>
       </div>
 
-      {/* Модальное окно */}
       {isModalOpen && (
         <div className="hero-modal-overlay" onClick={closeModal}>
-          <div className="hero-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="quiz-modal" onClick={(e) => e.stopPropagation()}>
             <button className="hero-modal-close" onClick={closeModal}>
               ×
             </button>
 
-            {isSubmitted ? (
-              <div className="hero-success-message">
-                <h3>Заявка успешно отправлена!</h3>
-                <p>
-                  Спасибо, <span>{name}</span>! Наш менеджер свяжется с вами в
-                  ближайшее время для обсуждения деталей.
-                </p>
-                <button className="hero-submit-btn" onClick={closeModal}>
-                  Отлично
-                </button>
+            {/* Прогресс-бар (шаги 2-8) */}
+            {step > 1 && step < 9 && (
+              <div className="quiz-progress-bar">
+                <div
+                  className="quiz-progress-fill"
+                  style={{ width: `${(step / 8) * 100}%` }}
+                ></div>
               </div>
-            ) : (
-              <>
-                <div className="hero-modal-header">
-                  <h2>Сделаем первый шаг вместе.</h2>
-                  <p>
-                    Оставьте заявку, и мы поможем подобрать абонемент, программу
-                    тренировок и тренера под ваши цели.
-                  </p>
-                </div>
+            )}
 
-                <form className="hero-form" onSubmit={handleSubmit}>
-                  {/* Персональные данные */}
-                  <div className="hero-input-group">
-                    <input
-                      type="text"
-                      placeholder="Ваше имя *"
-                      value={name}
-                      onChange={(e) => {
-                        setName(e.target.value);
-                        setNameError("");
-                      }}
-                      className={nameError ? "error-input" : ""}
-                    />
-                    {nameError && (
-                      <span className="hero-error-text">{nameError}</span>
-                    )}
-                  </div>
-
-                  <div className="hero-input-group">
-                    <input
-                      type="tel"
-                      placeholder="+375 (XX) XXX-XX-XX *"
-                      value={phone}
-                      onChange={(e) => {
-                        setPhone(e.target.value);
-                        setPhoneError("");
-                      }}
-                      className={phoneError ? "error-input" : ""}
-                    />
-                    {phoneError && (
-                      <span className="hero-error-text">{phoneError}</span>
-                    )}
-                  </div>
-
-                  <div className="hero-input-group">
-                    <input
-                      type="email"
-                      placeholder="Ваш Email *"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError("");
-                      }}
-                      className={emailError ? "error-input" : ""}
-                    />
-                    {emailError && (
-                      <span className="hero-error-text">{emailError}</span>
-                    )}
-                  </div>
-
-                  {/* Цели (Несколько вариантов) */}
-                  <div className="hero-form-section">
-                    <label className="hero-section-label">
-                      Какая у вас цель?
-                    </label>
-                    <div className="hero-checkbox-grid">
-                      {GOALS_LIST.map((goal) => (
-                        <label key={goal} className="hero-checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={selectedGoals.includes(goal)}
-                            onChange={() => toggleGoal(goal)}
-                          />
-                          <span className="hero-checkmark"></span>
-                          {goal}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Время тренировок */}
-                  <div className="hero-form-section">
-                    <label className="hero-section-label">
-                      Предпочитаемое время тренировок:
-                    </label>
-                    <select
-                      className="hero-select"
-                      value={preferredTime}
-                      onChange={(e) => setPreferredTime(e.target.value)}
+            <div className="quiz-body">
+              {/* ШАГ 1: Приветствие */}
+              {step === 1 && (
+                <div className="quiz-step-center">
+                  <span className="quiz-emoji">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="50"
+                      height="50"
+                      fill="#ff3b3b"
+                      className="bi bi-heart-pulse logo-icon"
+                      viewBox="0 0 16 16"
                     >
-                      <option value="Утро">Утро</option>
-                      <option value="День">День</option>
-                      <option value="Вечер">Вечер</option>
-                      <option value="Без разницы">Без разницы</option>
-                    </select>
+                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053.918 3.995.78 5.323 1.508 7H.43c-2.128-5.697 4.165-8.83 7.394-5.857q.09.083.176.171a3 3 0 0 1 .176-.17c3.23-2.974 9.522.159 7.394 5.856h-1.078c.728-1.677.59-3.005.108-3.947C13.486.878 10.4.28 8.717 2.01zM2.212 10h1.315C4.593 11.183 6.05 12.458 8 13.795c1.949-1.337 3.407-2.612 4.473-3.795h1.315c-1.265 1.566-3.14 3.25-5.788 5-2.648-1.75-4.523-3.434-5.788-5" />
+                      <path d="M10.464 3.314a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.5a.5.5 0 0 0 0 1H4a.5.5 0 0 0 .416-.223l1.473-2.209 1.647 4.118a.5.5 0 0 0 .945-.049l1.598-5.593 1.457 3.642A.5.5 0 0 0 12 9h3.5a.5.5 0 0 0 0-1h-3.162z" />
+                    </svg>
+                  </span>
+                  <h2>Привет!</h2>
+                  <p>
+                    Давай подберём для тебя подходящий формат тренировок всего
+                    за 30 секунд.
+                  </p>
+                  <button className="hero-submit-btn mt-4" onClick={handleNext}>
+                    Начать →
+                  </button>
+                </div>
+              )}
+
+              {/* ШАГ 2: Имя */}
+              {step === 2 && (
+                <div className="quiz-step">
+                  <h2>Как тебя зовут?</h2>
+                  <input
+                    type="text"
+                    className={`quiz-input ${errorMsg ? "error-input" : ""}`}
+                    placeholder="Ваше имя"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setErrorMsg("");
+                    }}
+                    autoFocus
+                  />
+                  {errorMsg && <p className="hero-error-text">{errorMsg}</p>}
+                </div>
+              )}
+
+              {/* ШАГ 3: Рост и вес */}
+              {step === 3 && (
+                <div className="quiz-step">
+                  <h2>Твои параметры</h2>
+                  <p className="quiz-hint">
+                    Это нужно для расчета индекса массы тела (ИМТ)
+                  </p>
+                  <div className="quiz-input-row">
+                    <input
+                      type="number"
+                      className="quiz-input"
+                      placeholder="Рост (см)"
+                      value={height}
+                      onChange={(e) => {
+                        setHeight(e.target.value);
+                        setErrorMsg("");
+                      }}
+                    />
+                    <input
+                      type="number"
+                      className="quiz-input"
+                      placeholder="Вес (кг)"
+                      value={weight}
+                      onChange={(e) => {
+                        setWeight(e.target.value);
+                        setErrorMsg("");
+                      }}
+                    />
+                  </div>
+                  {errorMsg && <p className="hero-error-text">{errorMsg}</p>}
+                </div>
+              )}
+
+              {/* ШАГ 4: ИМТ */}
+              {step === 4 && (
+                <div className="quiz-step-center">
+                  <h2>Результат ИМТ</h2>
+                  <div className="quiz-bmi-result">
+                    <span className="bmi-number">{getBMI()}</span>
+                    <span className="bmi-category">
+                      {getBMICategory(getBMI()).text}
+                    </span>
+                  </div>
+                  <p className="bmi-desc">{getBMICategory(getBMI()).desc}</p>
+                  <button className="hero-submit-btn mt-4" onClick={handleNext}>
+                    Продолжить
+                  </button>
+                </div>
+              )}
+
+              {/* ШАГ 5: Цель */}
+              {step === 5 && (
+                <div className="quiz-step">
+                  <h2>{name}, какая у тебя главная цель?</h2>
+                  <div className="quiz-grid">
+                    {GOALS_LIST.map((g) => (
+                      <button
+                        key={g}
+                        className={`quiz-card-btn ${goal === g ? "active" : ""}`}
+                        onClick={() => {
+                          setGoal(g);
+                          setErrorMsg("");
+                        }}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                  {errorMsg && <p className="hero-error-text">{errorMsg}</p>}
+                </div>
+              )}
+
+              {/* ШАГ 6: Время */}
+              {step === 6 && (
+                <div className="quiz-step">
+                  <h2>Когда удобнее заниматься?</h2>
+                  <div className="quiz-grid">
+                    {TIMES_LIST.map((t) => (
+                      <button
+                        key={t}
+                        className={`quiz-card-btn ${time === t ? "active" : ""}`}
+                        onClick={() => {
+                          setTime(t);
+                          setErrorMsg("");
+                        }}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                  {errorMsg && <p className="hero-error-text">{errorMsg}</p>}
+                </div>
+              )}
+
+              {/* ШАГ 7: Тренер */}
+              {step === 7 && (
+                <div className="quiz-step">
+                  <h2>Нужен ли персональный тренер?</h2>
+                  <p className="quiz-hint">
+                    Тренер ставит технику и мотивирует
+                  </p>
+                  <div
+                    className="quiz-grid"
+                    style={{ gridTemplateColumns: "1fr 1fr" }}
+                  >
+                    <button
+                      className={`quiz-card-btn ${needTrainer === true ? "active" : ""}`}
+                      onClick={() => {
+                        setNeedTrainer(true);
+                        setErrorMsg("");
+                      }}
+                    >
+                      Да
+                    </button>
+                    <button
+                      className={`quiz-card-btn ${needTrainer === false ? "active" : ""}`}
+                      onClick={() => {
+                        setNeedTrainer(false);
+                        setErrorMsg("");
+                      }}
+                    >
+                      Нет
+                    </button>
                   </div>
 
-                  {/* Выбор тренера (Условный рендеринг) */}
-                  <div className="hero-form-section">
-                    <label className="hero-checkbox-label hero-checkbox-main">
-                      <input
-                        type="checkbox"
-                        checked={needTrainer}
-                        onChange={(e) => setNeedTrainer(e.target.checked)}
-                      />
-                      <span className="hero-checkmark"></span>
-                      Нужен персональный тренер?
-                    </label>
-
-                    {needTrainer && (
+                  {needTrainer && (
+                    <div className="quiz-fade-in mt-3">
                       <select
-                        className="hero-select hero-select-animate"
+                        className="hero-select"
                         value={selectedTrainer}
                         onChange={(e) => setSelectedTrainer(e.target.value)}
-                        required={needTrainer}
                       >
-                        <option value="" disabled>
-                          Выберите тренера из списка
-                        </option>
-                        {TRAINERS_LIST.map((trainer) => (
-                          <option key={trainer} value={trainer}>
-                            {trainer}
+                        {TRAINERS_LIST.map((tr) => (
+                          <option key={tr} value={tr}>
+                            {tr}
                           </option>
                         ))}
                       </select>
-                    )}
+                    </div>
+                  )}
+                  {errorMsg && (
+                    <p className="hero-error-text mt-2">{errorMsg}</p>
+                  )}
+                </div>
+              )}
+
+              {/* ШАГ 8: Результат и Форма */}
+              {step === 8 && (
+                <div className="quiz-step">
+                  <div className="quiz-recommendation">
+                    <h3>Для цели: {goal.toLowerCase()}</h3>
+                    <p>
+                      <strong>{name}</strong>, рекомендуем:
+                    </p>
+                    {getRecommendation()}
                   </div>
 
-                  {/* Помощь с абонементом (Условный рендеринг) */}
-                  <div className="hero-form-section">
-                    <label className="hero-checkbox-label hero-checkbox-main">
+                  <h4 style={{ marginTop: "25px", marginBottom: "15px" }}>
+                    Оставить заявку
+                  </h4>
+                  <form onSubmit={handleSubmit}>
+                    <div className="hero-input-group">
+                      <input
+                        type="text"
+                        value={name}
+                        disabled
+                        className="quiz-input-disabled"
+                      />
+                    </div>
+                    <div className="hero-input-group">
+                      <input
+                        type="tel"
+                        placeholder="+375 (XX) XXX-XX-XX *"
+                        value={phone}
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          setErrorMsg("");
+                        }}
+                      />
+                    </div>
+                    <div className="hero-input-group">
+                      <input
+                        type="email"
+                        placeholder="Email (необязательно)"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setErrorMsg("");
+                        }}
+                      />
+                    </div>
+                    <label
+                      className="hero-checkbox-label"
+                      style={{ marginTop: "15px", marginBottom: "20px" }}
+                    >
                       <input
                         type="checkbox"
-                        checked={needMembershipHelp}
-                        onChange={(e) =>
-                          setNeedMembershipHelp(e.target.checked)
-                        }
+                        checked={wantConsultation}
+                        onChange={(e) => setWantConsultation(e.target.checked)}
                       />
                       <span className="hero-checkmark"></span>
-                      Нужна помощь с выбором абонемента?
+                      Хочу получить вводную консультацию
                     </label>
 
-                    {needMembershipHelp && (
-                      <div className="hero-help-alert">
-                        <span className="hero-help-icon">ℹ️</span>
-                        Наш менеджер подберёт оптимальный вариант с учётом ваших
-                        целей и графика.
-                      </div>
+                    {errorMsg && (
+                      <p className="hero-error-text mb-2">{errorMsg}</p>
                     )}
-                  </div>
+                    <button type="submit" className="hero-submit-btn">
+                      Получить персональную рекомендацию
+                    </button>
+                  </form>
+                </div>
+              )}
 
-                  <button type="submit" className="hero-submit-btn">
-                    ОТПРАВИТЬ ЗАЯВКУ
+              {/* ШАГ 9: Успех */}
+              {step === 9 && (
+                <div className="quiz-step-center">
+                  <span className="quiz-emoji">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="50"
+                      height="50"
+                      fill="#ff3b3b"
+                      className="bi bi-heart-pulse logo-icon"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053.918 3.995.78 5.323 1.508 7H.43c-2.128-5.697 4.165-8.83 7.394-5.857q.09.083.176.171a3 3 0 0 1 .176-.17c3.23-2.974 9.522.159 7.394 5.856h-1.078c.728-1.677.59-3.005.108-3.947C13.486.878 10.4.28 8.717 2.01zM2.212 10h1.315C4.593 11.183 6.05 12.458 8 13.795c1.949-1.337 3.407-2.612 4.473-3.795h1.315c-1.265 1.566-3.14 3.25-5.788 5-2.648-1.75-4.523-3.434-5.788-5" />
+                      <path d="M10.464 3.314a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.5a.5.5 0 0 0 0 1H4a.5.5 0 0 0 .416-.223l1.473-2.209 1.647 4.118a.5.5 0 0 0 .945-.049l1.598-5.593 1.457 3.642A.5.5 0 0 0 12 9h3.5a.5.5 0 0 0 0-1h-3.162z" />
+                    </svg>
+                  </span>
+                  <h2 style={{ color: "#ffffff" }}>Спасибо, {name}!</h2>
+                  <p>
+                    Мы свяжемся с вами в ближайшее время и поможем подобрать
+                    оптимальный формат тренировок.
+                  </p>
+                  <button className="hero-submit-btn mt-4" onClick={closeModal}>
+                    Закрыть
                   </button>
-                </form>
-              </>
+                </div>
+              )}
+            </div>
+
+            {/* Навигационные кнопки (Назад / Далее) */}
+            {step > 1 && step < 8 && step !== 4 && (
+              <div className="quiz-navigation">
+                <button
+                  className="quiz-nav-btn quiz-nav-back"
+                  onClick={handleBack}
+                >
+                  ← Назад
+                </button>
+                <button
+                  className="quiz-nav-btn quiz-nav-next"
+                  onClick={handleNext}
+                >
+                  Далее →
+                </button>
+              </div>
+            )}
+
+            {/* Для шага 4 (ИМТ) кнопка "Назад" слева, а "Продолжить" уже есть по центру */}
+            {step === 4 && (
+              <div
+                className="quiz-navigation"
+                style={{ justifyContent: "flex-start", marginTop: "-15px" }}
+              >
+                <button
+                  className="quiz-nav-btn quiz-nav-back"
+                  onClick={handleBack}
+                >
+                  ← Назад
+                </button>
+              </div>
             )}
           </div>
         </div>

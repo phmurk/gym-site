@@ -3,12 +3,15 @@ import "./Navbar.css";
 // import defaultAvatar from "../../assets/icons/default-user-avatar.svg";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
-// import bootstrap from "bootstrap";
 import { Offcanvas } from "bootstrap";
+import { useAuth } from "../../context/AuthContext";
 
 function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Достаем юзера и нужные функции из контекста
+  const { user, openAuthModal, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,12 +66,11 @@ function Navbar() {
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#mobileMenu"
-          aria-controls="mobileMenu"
-          aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        {/*  для ноутов */}
+
+        {/* --- ДЕСКТОПНОЕ МЕНЮ --- */}
         <div className="desktop-menu">
           <ul className="navbar-nav nav-links">
             <li className="nav-item">
@@ -76,19 +78,16 @@ function Navbar() {
                 Главная
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink className="nav-link" to="/schedule">
                 Расписание
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink className="nav-link" to="/trainers">
                 Тренеры
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink className="nav-link" to="/prices">
                 Цены
@@ -96,32 +95,46 @@ function Navbar() {
             </li>
           </ul>
         </div>
-        {/* <div className="profile-wrapper">
-          <NavLink className="profile-link" to="/profile">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="30"
-              height="30"
-              fill="currentColor"
-              className="bi bi-person-circle"
-              viewBox="0 0 16 16"
-            >
-              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-              <path
-                fillRule="evenodd"
-                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-              />
-            </svg>
-            <span>Профиль</span>
-          </NavLink>
-        </div> */}
+
+        {/* --- ПРОФИЛЬ / КНОПКА ВОЙТИ (ДЕСКТОП) --- */}
+        <div className="profile-wrapper">
+          {user ? (
+            <>
+              <span className="navbar-greeting">Привет, {user.name}!</span>
+              <NavLink className="profile-link" to="/profile">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  className="bi bi-person-circle profile-icon"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                  <path
+                    fillRule="evenodd"
+                    d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
+                  />
+                </svg>
+                <span>Профиль</span>
+              </NavLink>
+              <button className="navbar-auth-btn" onClick={logout}>
+                Выйти
+              </button>
+            </>
+          ) : (
+            <button className="navbar-auth-btn-main" onClick={openAuthModal}>
+              Войти
+            </button>
+          )}
+        </div>
       </div>
-      {/* для телефонов */}
+
+      {/* --- МОБИЛЬНОЕ МЕНЮ --- */}
       <div
         className="offcanvas offcanvas-end mobile-offcanvas"
         tabIndex={-1}
         id="mobileMenu"
-        aria-labelledby="mobileMenuLabel"
       >
         <div className="offcanvas-header">
           <h5 className="offcanvas-title">FitPulse</h5>
@@ -129,7 +142,6 @@ function Navbar() {
             type="button"
             className="btn-close btn-close-white"
             data-bs-dismiss="offcanvas"
-            aria-label="Close"
           ></button>
         </div>
         <div className="offcanvas-body">
@@ -166,15 +178,41 @@ function Navbar() {
                 Цены
               </NavLink>
             </li>
-            {/* <li className="nav-item">
-              <NavLink
-                className="nav-link"
-                to="/profile"
-                onClick={closeOffcanvas}
-              >
-                Профиль
-              </NavLink>
-            </li> */}
+
+            {/* АВТОРИЗАЦИЯ ДЛЯ МОБИЛОК */}
+            <li className="nav-item auth-mobile-item">
+              {user ? (
+                <>
+                  <span className="mobile-greeting">Привет, {user.name}!</span>
+                  <NavLink
+                    className="nav-link"
+                    to="/profile"
+                    onClick={closeOffcanvas}
+                  >
+                    Личный кабинет
+                  </NavLink>
+                  <button
+                    className="mobile-auth-btn"
+                    onClick={() => {
+                      logout();
+                      closeOffcanvas();
+                    }}
+                  >
+                    Выйти
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="mobile-auth-btn-main"
+                  onClick={() => {
+                    openAuthModal();
+                    closeOffcanvas();
+                  }}
+                >
+                  Войти / Регистрация
+                </button>
+              )}
+            </li>
           </ul>
         </div>
       </div>
