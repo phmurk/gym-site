@@ -6,9 +6,13 @@ import PricesCard from "./PricesCard";
 
 interface PricesGroupProps {
   category: PricesCategory;
+  onOpenModal: (planName: string) => void;
 }
 
-export default function PricesGroup({ category }: PricesGroupProps) {
+export default function PricesGroup({
+  category,
+  onOpenModal,
+}: PricesGroupProps) {
   return (
     <>
       <h3>{category.title}</h3>
@@ -16,7 +20,7 @@ export default function PricesGroup({ category }: PricesGroupProps) {
       <div>
         <div className="pricing-group-grid">
           {category.items.map((item) => (
-            <PricesCard key={item.id} item={item} />
+            <PricesCard key={item.id} item={item} onOpenModal={onOpenModal} />
           ))}
         </div>
       </div>

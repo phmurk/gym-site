@@ -5,9 +5,10 @@ import type { PricesItem } from "./PricesData";
 
 interface PricesCardProps {
   item: PricesItem;
+  onOpenModal: (planName: string) => void;
 }
 
-export default function PricesCard({ item }: PricesCardProps) {
+export default function PricesCard({ item, onOpenModal }: PricesCardProps) {
   return (
     <div className="pricing-card">
       <h4 className="pricing-card-title">{item.title}</h4>
@@ -21,7 +22,12 @@ export default function PricesCard({ item }: PricesCardProps) {
 
       {item.note && <p className="pricing-card-note">{item.note}</p>}
 
-      <button className="pricing-card-btn">Выбрать</button>
+      <button
+        className="pricing-card-btn"
+        onClick={() => onOpenModal(item.title)}
+      >
+        Выбрать
+      </button>
     </div>
   );
 }

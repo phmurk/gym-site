@@ -121,3 +121,169 @@
     padding: 12px 14px;
   }
 }
+
+/* =========================================
+   МОДАЛЬНОЕ ОКНО ПОКУПКИ
+   ========================================= */
+
+.prices-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.prices-modal {
+  background: #111111;
+  border: 1px solid rgba(255, 59, 59, 0.3);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  padding: 40px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+  color: #fff;
+  text-align: left;
+}
+
+.prices-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #d1d1d1;
+  font-size: 32px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.prices-modal-close:hover {
+  color: #ff3b3b;
+  background: rgba(255, 59, 59, 0.1);
+}
+
+.prices-modal-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #ffffff;
+}
+
+.prices-modal-header p {
+  color: #cfcfcf;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 59, 59, 0.2);
+}
+
+.prices-modal-header strong {
+  color: #ff3b3b;
+  font-size: 16px;
+}
+
+/* Поля ввода */
+.prices-input-group {
+  margin-bottom: 18px;
+}
+
+.prices-input-group input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.prices-input-group input:focus {
+  border-color: #ff3b3b;
+  box-shadow: 0 0 10px rgba(255, 59, 59, 0.15);
+}
+
+.prices-input-group input.error-input {
+  border-color: #ff3b3b;
+}
+
+.prices-error-text {
+  color: #ff3b3b;
+  font-size: 12px;
+  margin-top: 6px;
+  display: block;
+  padding-left: 5px;
+}
+
+/* Кнопка отправки */
+.prices-submit-btn {
+  width: 100%;
+  background: #ff3b3b;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+  margin-top: 10px;
+}
+
+.prices-submit-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 59, 59, 0.3);
+}
+
+/* Сообщение об успехе */
+.prices-success-message {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.prices-success-message h3 {
+  color: #ff3b3b;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.prices-success-message p {
+  color: #d1d1d1;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.prices-success-message span {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Адаптив модалки */
+@media (max-width: 576px) {
+  .prices-modal {
+    padding: 30px 20px;
+  }
+  .prices-modal-header h2 {
+    font-size: 22px;
+  }
+}

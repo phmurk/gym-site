@@ -3,7 +3,11 @@
 import "./TopHits.css";
 import { topHits } from "./PricesData";
 
-export default function TopHits() {
+interface TopHitsProps {
+  onOpenModal: (planName: string) => void;
+}
+
+export default function TopHits({ onOpenModal }: TopHitsProps) {
   return (
     <section className="top-hits-section">
       <div className="top-hits-grid">
@@ -23,7 +27,9 @@ export default function TopHits() {
               <strong>Для кого:</strong> {hit.targetAudience}
             </div>
 
-            <button className="hit-btn">Купить абонемент</button>
+            <button className="hit-btn" onClick={() => onOpenModal(hit.title)}>
+              Купить абонемент
+            </button>
           </div>
         ))}
       </div>
