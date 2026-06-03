@@ -34,13 +34,13 @@ function Navbar() {
         offcanvasInstance.hide();
       }
     }
-    setTimeout(() => {
-      const backdrops = document.querySelectorAll(".offcanvas-backdrop");
-      backdrops.forEach((backdrop) => backdrop.remove());
+    // setTimeout(() => {
+    //   const backdrops = document.querySelectorAll(".offcanvas-backdrop");
+    //   backdrops.forEach((backdrop) => backdrop.remove());
 
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    }, 300);
+    //   document.body.style.overflow = "";
+    //   document.body.style.paddingRight = "";
+    // }, 300);
   };
 
   return (
